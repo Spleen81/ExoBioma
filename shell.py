@@ -65,7 +65,7 @@ def create_shell_visualization(ax, R, P_surface, name, is_rocky=True, H=None, P_
         P = pressure_gradient_gas(r, R, P_center, P_surface)
     
     # Gamma di pressione compatibile con la vita
-    P_min, P_max = 1e-6, 1e6  # Pa, aumentato di 2 ordini di grandezza
+    P_min, P_max = 1e-5, 1e8  # Pa, aumentato di 2 ordini di grandezza
     
     # Convertire pressione in atm e usare clip per evitare errori nel log10
     P_atm = pa_to_atm(P)
