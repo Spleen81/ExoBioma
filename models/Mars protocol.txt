@@ -1,0 +1,46 @@
+======================================================================
+Protocollo Metodologico: Stima dell'MLS 2.0 per il Sottosuolo Marziano
+Progetto Exobioma - Data: 2 agosto 2025
+======================================================================
+
+Questo documento definisce i principi e le metodologie per l'applicazione del modello MLS 2.0 (Multiparametric Life Score) al sottosuolo di Marte, con l'obiettivo di valutare il potenziale per un'abitabilità microbica transiente basata sui limiti della vita terrestre.
+
+
+1.  OBIETTIVO PRIMARIO: MODELLO DI ABITABILITÀ TRANSIENTE
+------------------------------------------------------------
+L'analisi non si focalizzerà sulla ricerca di nicchie stabili perennemente abitabili, ma sulla mappatura di "finestre di opportunità" spaziali e temporali che permetterebbero cicli di dormienza e proliferazione.
+
+La domanda scientifica centrale è:
+"In quali regioni (latitudine), a quali profondità (0-2m) e in quali scenari geochimici (tipo di sale/minerale) esistono finestre temporali (ore/anno) in cui le condizioni di temperatura (T > -21°C) e attività dell'acqua (a_w > 0.605) si sovrappongono, consentendo la proliferazione di estremofili di tipo terrestre?"
+
+
+2.  FATTORE LIMITANTE 1: TEMPERATURA (T)
+---------------------------------------------
+- **Limite Biologico Assoluto:** Verrà implementato un limite rigido per la proliferazione attiva a T = -21°C. Qualsiasi voxel del modello con una temperatura inferiore a questa soglia avrà un fattore di compatibilità termica nullo.
+- **Approccio Temporale:** Il modello calcolerà, per ogni voxel (definito da latitudine e profondità), il numero totale di ore per anno marziano in cui la temperatura supera i -21°C. Questo valore ("Ore di Proliferazione Potenziali") sarà la nostra metrica termica di base.
+- **Profondità di Indagine:** L'analisi si concentrerà sul sottosuolo superficiale (0-2 metri), dove le onde termiche stagionali hanno un impatto significativo.
+
+
+3.  FATTORE LIMITANTE 2: ATTIVITÀ DELL'ACQUA (a_w)
+------------------------------------------------------
+- **Limite Biologico Assoluto:** Verrà implementato un limite rigido per la proliferazione attiva a a_w = 0.605. Voxel con valori di a_w inferiori avranno un fattore di compatibilità nullo.
+- **Approccio a Scenari Geochimici:** Poiché l'a_w non è direttamente misurabile, verranno modellati diversi scenari scientificamente plausibili per stimarla:
+    1.  **Scenario Baseline:** Basato sulla geochimica media del regolite.
+    2.  **Scenario "Argille":** Modellerà l'effetto delle interfacce acqua-fillosilicati, che possono aumentare l'a_w locale.
+    3.  **Scenario "Deliquescenza":** Modellerà la formazione di micro-salamoie liquide dall'assorbimento di umidità atmosferica da parte di sali igroscopici (es. perclorati).
+    4.  **Scenario "Subglaciale":** Valuterà l'a_w di potenziali bacini liquidi alla base delle calotte polari.
+
+
+4.  PARAMETRI DI SALINITÀ
+----------------------------
+Per supportare l'approccio a scenari geochimici, il database "Exobioma 2.0" includerà colonne di tolleranza per una gamma di sali di rilevanza astrobiologica:
+- **Tolleranza_NaCl_%:** Riferimento standard.
+- **Tolleranza_Solfati:** Per sali come MgSO4, FeSO4 (rilevanti per Marte).
+- **Tolleranza_Cloruri_Caotropici:** Per sali come MgCl2, CaCl2 (rilevanti per salamoie profonde e Marte).
+- **Tolleranza_Perclorati:** Per sali come Mg(ClO4)2 (rilevanti per le salamoie liquide a bassa temperatura su Marte).
+- **Tolleranza_Carbonati:** Per sali come Na2CO3 (rilevanti per ambienti alo-alcalini).
+
+
+5.  RISULTATO FINALE ATTESO
+---------------------------
+Il risultato non sarà un singolo valore MLS per Marte, ma una serie di mappe di "Abitabilità Transiente Condizionale". Queste mappe mostreranno, per ogni scenario geochimico, la distribuzione e la durata delle finestre di opportunità per la vita, evidenziando le aree del pianeta con il più alto potenziale astrobiologico secondo i limiti della vita che conosciamo.
