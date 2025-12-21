@@ -68,7 +68,7 @@ This repository is currently being populated.
 ---
 
 ## 📬 Contact & Collaboration
-**Principal Investigator:** Marco Marcellino  
+**Principal Investigator:** Marco Marcellino  - marco.marcellino@inaf.it
 *INAF - Osservatorio Astronomico di Palermo* *Focus: Molecular Biology & Computational Astrobiology*
 
 We welcome collaboration from:
