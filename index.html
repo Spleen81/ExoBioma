@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Exobioma Project | Scrollytelling Interface</title>
+    <style>
+        :root { --bg: #ffffff; --ink: #000000; }
+        body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Inter', sans-serif; overflow-x: hidden; height: 600vh; }
+
+        .hero-arrival {
+            height: 100vh; display: flex; justify-content: center; align-items: center;
+            position: fixed; top: 0; width: 100%; z-index: 10;
+        }
+
+        .logogram-svg { width: 500px; height: 500px; filter: url(#inky-filter); }
+
+        .logogram-path {
+            fill: none; stroke: black; stroke-width: 2;
+            stroke-dasharray: 1200; stroke-dashoffset: 1200;
+            animation: writeLogogram 6s ease-out forwards;
+        }
+
+        @keyframes writeLogogram { to { stroke-dashoffset: 0; } }
+
+        .petri-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            perspective: 1200px; display: flex; justify-content: center; align-items: center;
+            z-index: 5; opacity: 0; transition: opacity 1s ease-in-out;
+            pointer-events: none;
+        }
+
+        .petri-dish {
+            width: 320px; height: 320px; border: 6px solid #000; border-radius: 50%;
+            background: white; transform: rotateX(75deg); transition: transform 0.1s;
+            image-rendering: pixelated; position: relative;
+        }
+
+        .colony {
+            position: absolute; background: #000; border-radius: 50%;
+            transform: translate(-50%, -50%); opacity: 0;
+            transition: width 1s, height 1s, opacity 0.5s;
+        }
+
+        section { height: 100vh; padding: 0 10%; display: flex; align-items: center; position: relative; z-index: 20; }
+        .content-box { max-width: 500px; background: rgba(255,255,255,0.9); padding: 30px; border-left: 3px solid #000; }
+        
+        .equation { font-family: 'serif'; font-size: 1.5rem; margin: 20px 0; border-top: 1px solid #000; padding-top: 10px; }
+        .counter { font-family: monospace; font-size: 2rem; font-weight: bold; }
+
+        #inky-filter { display: none; }
+    </style>
+</head>
+<body>
+
+    <svg>
+        <filter id="inky-filter">
+            <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="4" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="25" />
+        </filter>
+    </svg>
+
+    <div class="hero-arrival" id="arrival-hero">
+        <svg class="logogram-svg" viewBox="0 0 200 200">
+            <path class="logogram-path" d="M100 20 C 150 20 180 60 180 100 C 180 140 140 180 100 180 C 60 180 20 140 20 100 C 20 60 50 20 100 20" />
+        </svg>
+    </div>
+
+    <div class="petri-container" id="petri-container">
+        <div class="petri-dish" id="petri"></div>
+    </div>
+
+    <section>
+        <div class="content-box">
+            <h1>EXOBIOMA PROJECT</h1>
+            <p>Dalla biochimica atmosferica alla validazione delle firme biologiche esoplanetarie[cite: 8].</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="content-box">
+            <h2>Life-Compatible Zone (LCZ)</h2>
+            <p>Superiamo il concetto di abitabilità classica definendo regioni in cui i parametri ambientali rispettano i limiti di tolleranza degli estremofili[cite: 478].</p>
+            <div class="equation">R_s = (V_s / V_s^\oplus)^{1/3}</div>
+        </div>
+    </section>
+
+    <section id="extremophile-trigger">
+        <div class="content-box">
+            <h2>MLS 2.0: Validazione</h2>
+            <p>Integrazione di profili metagenomici e test di tolleranza termica e radiativa[cite: 44, 350].</p>
+            <div class="counter" id="record-count">800 RECORD</div>
+        </div>
+    </section>
+
+    <section>
+        <div class="content-box">
+            <h2>Multiparametric Life Score</h2>
+            <p>Una metrica per quantificare la capacità di un'atmosfera di ospitare la vita basata sulla diversità delle categorie compatibili[cite: 24, 606].</p>
+            <div class="equation">{\cal L} = \frac{J^\prime R_s}{N_{\text{ext}}} \sum S_i</div>
+        </div>
+    </section>
+
+    <script>
+        // --- LA RIGA MAGICA PER IL LOGOGRAMMA UNICO ---
+        // Cambia il 'seed' del rumore frattale a ogni caricamento
+        document.querySelector('feTurbulence').setAttribute('seed', Math.random() * 1000);
+
+        const arrivalHero = document.getElementById('arrival-hero');
+        const petriContainer = document.getElementById('petri-container');
+        const petri = document.getElementById('petri');
+        const recordCount = document.getElementById('record-count');
+        
+        let coloniesSpawned = false;
+
+        window.addEventListener('scroll', () => {
+            const scrollFactor = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+            arrivalHero.style.opacity = Math.max(0, 1 - (scrollFactor * 5));
+
+            if (scrollFactor > 0.35) {
+                petriContainer.style.opacity = "1";
+                const rotation = Math.max(0, 75 - ((scrollFactor - 0.35) * 200));
+                petri.style.transform = `rotateX(${rotation}deg)`;
+            } else {
+                petriContainer.style.opacity = "0";
+            }
+
+            if (scrollFactor > 0.5) {
+                if (!coloniesSpawned) {
+                    spawnColonies();
+                    coloniesSpawned = true;
+                }
+                recordCount.innerText = "~152.000 RECORD"; // [cite: 51]
+            } else {
+                if (coloniesSpawned) {
+                    petri.innerHTML = '';
+                    coloniesSpawned = false;
+                }
+                recordCount.innerText = "800 RECORD"; // [cite: 51]
+            }
+        });
+
+        function spawnColonies() {
+            for (let i = 0; i < 12; i++) {
+                const c = document.createElement('div');
+                c.className = 'colony';
+                c.style.left = (20 + Math.random() * 60) + '%';
+                c.style.top = (20 + Math.random() * 60) + '%';
+                petri.appendChild(c);
+                setTimeout(() => {
+                    const size = 15 + Math.random() * 45;
+                    c.style.width = size + 'px';
+                    c.style.height = size + 'px';
+                    c.style.opacity = '0.8';
+                }, i * 120);
+            }
+        }
+    </script>
+
+</body>
+</html>
