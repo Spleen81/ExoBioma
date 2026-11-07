@@ -1,0 +1,2187 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exobioma Project — dagli estremofili ai pianeti da osservare</title>
+<meta name="description" content="Exobioma Project: un framework per mettere in relazione le tolleranze di 300 estremofili con le condizioni stimate degli esopianeti (metrica MLS e Life-Compatible Zone), in sviluppo verso modelli di chimica atmosferica e liste di molecole da cercare con JWST, ARIEL e HWO. M. Marcellino, D. Locci, R. Aslam et al.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Spectral:ital,wght@0,300;0,400;1,300&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<style>
+  :root{
+    --paper:#F6F0E2;
+    --paper-2:#EFE7D4;
+    --ink:#2A2318;
+    --mut:#756A57;
+    --hair:#D8CDB8;
+    --acc:#175E7D;
+    --warn:#A44E2E;
+    --serif:"Cormorant Garamond",Georgia,serif;
+    --body:"Spectral",Georgia,serif;
+    --mono:"IBM Plex Mono",monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;background:var(--paper)}
+  ::selection{background:var(--acc);color:var(--paper)}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:var(--body);font-size:17px;line-height:1.75;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  body::after{
+    content:"";position:fixed;inset:0;z-index:2000;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::-webkit-scrollbar{width:10px}
+  ::-webkit-scrollbar-track{background:var(--paper)}
+  ::-webkit-scrollbar-thumb{background:#CBBFA6}
+
+  a{color:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,4.5vw,56px)}
+  .mono{font-family:var(--mono)}
+  :focus-visible{outline:2px dashed var(--acc);outline-offset:3px}
+  button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+
+  /* ============ NAV ============ */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:1000;
+    transition:background .3s,border-color .3s;
+    border-bottom:1px solid transparent;
+  }
+  nav.scrolled{background:rgba(246,240,226,.9);backdrop-filter:blur(8px);border-color:var(--hair)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+  #navGlyph{width:22px;height:22px;display:block}
+  .brand-name{font-family:var(--serif);font-weight:600;font-size:19px;letter-spacing:.02em}
+  .nav-links{display:flex;gap:clamp(10px,2vw,26px);list-style:none}
+  .nav-links a{
+    font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    text-decoration:none;color:var(--mut);padding:6px 0;border-bottom:1px solid transparent;
+    transition:color .2s,border-color .2s;
+  }
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a.active{color:var(--acc);border-color:var(--acc)}
+  .nav-cta{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-decoration:none;
+    border:1px solid var(--ink);padding:8px 16px;transition:all .2s;
+  }
+  .nav-cta:hover{background:var(--ink);color:var(--paper)}
+  @media(max-width:960px){.nav-links{display:none}}
+
+  /* ============ HERO ============ */
+  .hero{min-height:100svh;display:flex;align-items:center;position:relative;padding:110px 0 70px}
+  .hero-grid{display:grid;grid-template-columns:1.12fr .95fr;gap:clamp(30px,5vw,70px);align-items:center;width:100%}
+  .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--mut);display:flex;align-items:center;gap:12px;
+  }
+  .eyebrow::before{content:"";width:34px;height:1px;background:var(--acc)}
+  h1{
+    font-family:var(--serif);font-weight:500;
+    font-size:clamp(2.7rem,5.8vw,4.7rem);line-height:1.04;letter-spacing:-.01em;
+    margin:26px 0 24px;
+  }
+  h1 em{font-style:italic;font-weight:500;color:var(--acc)}
+  .hero-sub{font-size:clamp(1.05rem,1.4vw,1.22rem);color:#4A4234;max-width:54ch;font-weight:300}
+  .hero-meta{
+    display:flex;flex-wrap:wrap;gap:8px 26px;margin-top:30px;padding-top:18px;border-top:1px solid var(--hair);
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);
+  }
+  .hero-actions{display:flex;align-items:center;gap:26px;flex-wrap:wrap;margin-top:34px}
+  .btn-solid{
+    display:inline-block;background:var(--ink);color:var(--paper);text-decoration:none;
+    font-family:var(--mono);font-size:12px;letter-spacing:.14em;padding:15px 28px;transition:background .25s;
+  }
+  .btn-solid:hover{background:var(--acc)}
+  .link-u{
+    font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-decoration:none;
+    border-bottom:1px solid var(--ink);padding-bottom:3px;transition:color .2s,border-color .2s;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .link-u:hover{color:var(--acc);border-color:var(--acc)}
+  .link-u svg{transition:transform .2s}
+  .link-u:hover svg{transform:translateX(4px)}
+
+  .ring-col{display:flex;flex-direction:column;align-items:center;gap:18px}
+  .ring-stage{
+    position:relative;width:min(100%,500px);aspect-ratio:1/1;cursor:pointer;
+    border-radius:50%;
+  }
+  .ring-px{position:absolute;inset:0;will-change:transform}
+  .ring-rot{position:absolute;inset:0;animation:slowspin 300s linear infinite}
+  @keyframes slowspin{to{transform:rotate(360deg)}}
+  #heroRing{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .ring-cap{
+    font-family:var(--mono);font-size:10.5px;line-height:1.9;letter-spacing:.06em;
+    color:var(--mut);max-width:44ch;border-left:1px solid var(--hair);padding-left:14px;
+  }
+  .ring-cap b{color:var(--ink);font-weight:500}
+  .scrollcue{
+    position:absolute;left:50%;bottom:22px;transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:10px;
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--mut);
+  }
+  .scrollcue i{display:block;width:1px;height:44px;background:var(--mut);transform-origin:top;animation:cue 2.4s ease-in-out infinite}
+  @keyframes cue{0%{transform:scaleY(0)}55%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+  @media(max-width:980px){
+    .hero{padding-top:96px}
+    .hero-grid{grid-template-columns:1fr}
+    .ring-col{order:-1}
+    .ring-stage{width:min(74vw,360px)}
+    .scrollcue{display:none}
+  }
+
+  /* ============ SEZIONI ============ */
+  section{border-top:1px solid var(--hair);padding:96px 0 110px;scroll-margin-top:70px}
+  .sec-head{display:flex;align-items:center;gap:20px;margin-bottom:clamp(40px,6vw,64px)}
+  .glyph{width:44px;height:44px;flex:none;display:block}
+  .sec-no{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--acc);flex:none}
+  .sec-head h2{font-family:var(--serif);font-weight:500;font-size:clamp(1.85rem,3.4vw,2.7rem);letter-spacing:-.01em;white-space:nowrap}
+  .sec-head .rule{flex:1;height:1px;background:var(--hair);min-width:20px}
+  @media(max-width:720px){.sec-head h2{white-space:normal}}
+
+  .lead{font-family:var(--serif);font-weight:500;font-size:clamp(1.25rem,2.1vw,1.62rem);line-height:1.5;max-width:30em}
+  .lead em{font-style:italic;color:var(--acc)}
+  .note-body{font-size:1.02rem;color:#4A4234;max-width:62ch;font-weight:300}
+  .note-body strong{font-weight:400;color:var(--ink)}
+
+  /* ---- citazione-manifesto ---- */
+  .quote{
+    margin:clamp(48px,7vw,72px) auto 0;max-width:36em;text-align:center;
+    padding:36px 10px;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);
+  }
+  .quote p{font-family:var(--serif);font-weight:500;font-size:clamp(1.4rem,2.6vw,2.05rem);line-height:1.35}
+  .quote em{font-style:italic;color:var(--acc)}
+  .quote figcaption{margin-top:16px;font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;color:var(--mut)}
+
+  /* ---- pilastri / righe numerate ---- */
+  .pillars{border-top:1px solid var(--hair)}
+  .pillar{
+    display:grid;grid-template-columns:70px 300px 1fr;gap:24px;align-items:baseline;
+    padding:26px 6px;border-bottom:1px solid var(--hair);
+  }
+  .pillar-no{font-family:var(--mono);font-size:12px;color:var(--acc);letter-spacing:.14em}
+  .pillar-t{font-family:var(--serif);font-weight:500;font-size:1.4rem;line-height:1.25}
+  .pillar-d{color:#4A4234;font-weight:300;max-width:62ch}
+  @media(max-width:860px){.pillar{grid-template-columns:52px 1fr;gap:10px 18px}.pillar-d{grid-column:2}}
+  .aside-note{
+    margin-top:54px;max-width:74ch;border-left:2px solid var(--acc);padding:6px 0 6px 24px;
+    font-size:.98rem;color:#4A4234;font-weight:300;
+  }
+  .aside-note b{font-weight:400;color:var(--ink)}
+  .aside-note .dw{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--acc);display:block;margin-bottom:8px}
+  .note-k{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--acc);display:block;margin-bottom:8px}
+
+  /* ---- §01 anelli prima/dopo ---- */
+  .shift{
+    display:grid;grid-template-columns:1fr auto 1fr;gap:clamp(20px,4vw,54px);
+    align-items:center;margin:clamp(44px,6vw,70px) 0;
+  }
+  .shift-cell{display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px}
+  .shift-cell canvas{width:clamp(120px,16vw,164px);height:clamp(120px,16vw,164px);display:block}
+  .shift-lab{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut)}
+  .shift-txt{font-family:var(--serif);font-size:1.12rem;line-height:1.45;max-width:26ch}
+  .shift-arrow{color:var(--mut)}
+  @media(max-width:720px){
+    .shift{grid-template-columns:1fr}
+    .shift-arrow{transform:rotate(90deg)}
+  }
+
+  /* ---- §02 termometro ---- */
+  .temp-scroll{overflow-x:auto;margin-top:clamp(40px,5vw,60px);padding-bottom:6px}
+  .temp-axis{position:relative;min-width:560px;height:162px}
+  .temp-bar{position:absolute;left:0;right:0;top:76px;height:2px;background:linear-gradient(90deg,#7FA8B8,#C9BB90 55%,#C77E4F)}
+  .temp-seg{position:absolute;top:71px;height:12px;background:rgba(23,94,125,.14);border-left:1px solid var(--acc);border-right:1px solid var(--acc)}
+  .temp-tick{position:absolute;top:66px;width:1px;height:22px;background:var(--ink)}
+  .temp-tick.hot{background:var(--warn);width:1.5px}
+  .temp-lab{position:absolute;transform:translateX(-50%);text-align:center;display:flex;flex-direction:column;gap:1px;width:max-content}
+  .temp-lab .t{font-family:var(--mono);font-size:11.5px;font-weight:500;color:var(--ink)}
+  .temp-lab .n{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--mut);text-transform:uppercase}
+  .temp-lab i{position:absolute;left:50%;width:1px;background:#C4B79C}
+  .temp-lab.up{top:14px}.temp-lab.up i{top:calc(100% + 4px);height:14px}
+  .temp-lab.dn{top:110px}.temp-lab.dn i{bottom:calc(100% + 4px);height:14px}
+  .temp-lab.edge-l{transform:translateX(-20%)}
+  .temp-lab.edge-r{transform:translateX(-80%)}
+  .temp-lab.hot .t{color:var(--warn)}
+  .temp-scale span{position:absolute;top:150px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--mut)}
+  .temp-scale span:first-child{left:0}
+  .temp-scale span:last-child{right:0}
+
+  /* ---- §03 colonna ---- */
+  .reg-grid{display:grid;grid-template-columns:5fr 7fr;gap:clamp(28px,4.5vw,64px);align-items:start}
+  @media(max-width:920px){.reg-grid{grid-template-columns:1fr}}
+  .reg-letter{
+    font-family:var(--serif);font-weight:500;font-size:clamp(4rem,7vw,6rem);line-height:1;
+    transition:color .3s;
+  }
+  .reg-info.warn .reg-letter{color:var(--warn)}
+  .reg-info h3{font-family:var(--serif);font-weight:500;font-size:1.7rem;margin-top:8px}
+  .reg-range{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--mut);margin:6px 0 14px;text-transform:uppercase}
+  .reg-desc{font-weight:300;color:#4A4234;min-height:7.5em;max-width:48ch}
+  .reg-info.warn .reg-desc{color:var(--warn)}
+  .readout{
+    display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--hair);
+    border:1px solid var(--hair);margin-top:26px;
+  }
+  .readout>div{background:var(--paper);padding:12px 14px}
+  .readout dt{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--mut);text-transform:uppercase}
+  .readout dd{font-family:var(--mono);font-size:15px;margin-top:5px;font-weight:500}
+  .readout dd.acc{color:var(--acc)}
+  .readout dd.warn{color:var(--warn)}
+  .reg-hint{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--mut);margin-top:14px;text-transform:uppercase}
+  .swap{animation:fadeSlide .5s both}
+  @keyframes fadeSlide{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+  #regimeCanvas{width:100%;height:560px;display:block;cursor:ns-resize;touch-action:none}
+  @media(max-width:920px){#regimeCanvas{height:440px}}
+  .fig-cap{font-family:var(--mono);font-size:10.5px;line-height:1.9;color:var(--mut);margin-top:16px;max-width:80ch}
+  .fig-cap b{color:var(--ink);font-weight:500}
+  .stokes{margin:18px 0 4px;color:var(--ink)}
+  .stokes .katex{font-size:1.05em}
+
+  /* ---- §04 prototipi ---- */
+  .ptabs{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--hair);margin-bottom:clamp(28px,4vw,44px)}
+  .ptabs button{
+    font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--mut);padding:14px 22px 12px;border-bottom:2px solid transparent;margin-bottom:-1px;
+    transition:color .2s,border-color .2s;
+  }
+  .ptabs button:hover{color:var(--ink)}
+  .ptabs button.active{color:var(--ink);border-color:var(--ink)}
+  .proto-grid{display:grid;grid-template-columns:5fr 7fr;gap:clamp(28px,4.5vw,64px);align-items:start}
+  @media(max-width:920px){.proto-grid{grid-template-columns:1fr}}
+  .proto-g{font-family:var(--serif);font-size:3.4rem;line-height:1;color:var(--acc)}
+  .proto-name{font-family:var(--serif);font-weight:500;font-size:clamp(1.5rem,2.4vw,2rem);margin-top:6px}
+  .proto-org{font-style:italic;color:var(--mut);margin-top:2px}
+  .proto-dl{margin:24px 0 20px;border-top:1px solid var(--hair)}
+  .proto-dl>div{display:grid;grid-template-columns:150px 1fr;gap:14px;padding:10px 2px;border-bottom:1px solid var(--hair)}
+  .proto-dl dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--mut);text-transform:uppercase;padding-top:3px}
+  .proto-dl dd{font-family:var(--mono);font-size:12.5px}
+  .proto-note{font-weight:300;color:#4A4234;max-width:46ch;font-size:.98rem}
+  #specCanvas{width:100%;height:300px;display:block}
+  @media(max-width:920px){#specCanvas{height:240px}}
+  .spec-legend{display:flex;gap:26px;flex-wrap:wrap;margin-bottom:12px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--mut);text-transform:uppercase}
+  .spec-legend span{display:inline-flex;align-items:center;gap:8px}
+  .sw{display:inline-block;width:22px;height:0;border-top:2px solid}
+
+  /* ---- §05 modello ---- */
+  .model-grid{display:grid;grid-template-columns:5fr 7fr;gap:clamp(28px,4.5vw,64px);align-items:start}
+  @media(max-width:920px){.model-grid{grid-template-columns:1fr}}
+  .terms{border-top:1px solid var(--hair);margin-top:30px}
+  .term-row{
+    display:grid;grid-template-columns:112px 1fr;gap:6px 18px;width:100%;text-align:left;
+    padding:15px 8px;border-bottom:1px solid var(--hair);align-items:baseline;
+    transition:background .2s;
+  }
+  .term-row:hover,.term-row:focus-visible{background:rgba(23,94,125,.06)}
+  .term-row .sym{font-size:1rem;color:var(--ink)}
+  .term-row .term-name{font-family:var(--serif);font-weight:500;font-size:1.05rem}
+  .term-row .term-desc{grid-column:2;font-size:.88rem;color:var(--mut);line-height:1.65;font-weight:300}
+  .eqbox{
+    padding:clamp(24px,3vw,40px) clamp(18px,2.5vw,34px);border:1px solid var(--hair);
+    background:var(--paper-2);margin-bottom:26px;overflow-x:auto;
+  }
+  .eqbox .katex{font-size:clamp(1.05rem,1.9vw,1.4rem);color:var(--ink)}
+  .eqbox .katex-display{margin:0}
+  .eq-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--acc);text-transform:uppercase;margin-bottom:18px;display:block}
+  .eq-note{font-size:.9rem;color:var(--mut);font-weight:300;margin-top:16px;max-width:56ch}
+  .eqbox .lit{color:var(--acc)}
+  .eq-foot{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--mut);margin-top:4px}
+  .eq-foot b{color:var(--ink);font-weight:500}
+  .ilam{margin-top:26px;font-size:.95rem;color:#4A4234;font-weight:300;max-width:52ch}
+  .ilam .katex{font-size:1em;color:var(--ink)}
+
+  /* ---- §06 percorso ---- */
+  .pipe{margin-top:clamp(40px,6vw,64px)}
+  .pipe-row{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(18px,2.5vw,36px)}
+  .pipe-row::before{content:"";position:absolute;top:48px;left:12.5%;right:12.5%;border-top:1px dashed #BFB39A}
+  .pipe-step{text-align:center;position:relative}
+  .pglyph{width:96px;height:96px;display:block;margin:0 auto;background:var(--paper);border-radius:50%;position:relative;z-index:1}
+  .pipe-k{display:block;margin:18px 0 6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;color:var(--acc)}
+  .pipe-step h3{font-family:var(--serif);font-weight:500;font-size:1.3rem;margin-bottom:8px}
+  .pipe-step p{font-size:.92rem;font-weight:300;color:#4A4234;max-width:24em;margin:0 auto}
+  .pipe-step .chip{margin-left:6px}
+  .pipe-return{
+    position:relative;margin-top:40px;border-top:1px dashed #BFB39A;padding-top:16px;text-align:center;
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--mut);
+  }
+  .pipe-return::before{
+    content:"";position:absolute;left:calc(12.5% - 5px);top:-5px;width:9px;height:9px;
+    border-left:1px solid #BFB39A;border-bottom:1px solid #BFB39A;transform:rotate(45deg);
+  }
+  @media(max-width:860px){
+    .pipe-row{grid-template-columns:1fr 1fr;gap:40px 24px}
+    .pipe-row::before,.pipe-return::before{display:none}
+  }
+  @media(max-width:520px){.pipe-row{grid-template-columns:1fr}}
+
+  /* ---- §07 roadmap ---- */
+  .phase{display:grid;grid-template-columns:110px 1fr;gap:clamp(18px,3vw,40px);padding:38px 0;border-bottom:1px solid var(--hair)}
+  .phase:first-of-type{border-top:1px solid var(--hair)}
+  .rglyph{width:96px;height:96px;display:block}
+  .phase-top{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .phase-k{font-size:11px;letter-spacing:.22em;color:var(--acc)}
+  .phase-when{font-size:10px;letter-spacing:.18em;color:var(--mut)}
+  .chip{font-family:var(--mono);font-size:9px;letter-spacing:.18em;padding:4px 10px;border:1px solid}
+  .chip-live{color:var(--acc);border-color:var(--acc)}
+  .chip-plan{color:var(--ink);border-color:var(--ink)}
+  .chip-hz{color:var(--mut);border-color:var(--hair)}
+  .chip-rev{color:var(--warn);border-color:var(--warn)}
+  .chip-next{color:var(--warn);border-color:var(--warn);border-style:dashed}
+  .phase h3{font-family:var(--serif);font-weight:500;font-size:clamp(1.45rem,2.4vw,1.95rem);margin:10px 0}
+  .phase p{font-weight:300;color:#4A4234;max-width:66ch}
+  .mile{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:6px}
+  .mile li{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--mut)}
+  .mile li::before{content:"—";color:var(--acc);margin-right:10px}
+  @media(max-width:680px){.phase{grid-template-columns:1fr}.rglyph{width:72px;height:72px}}
+
+  /* ---- §08 contatti ---- */
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,5vw,80px);align-items:start}
+  @media(max-width:860px){.contact-grid{grid-template-columns:1fr}}
+  .citation{
+    margin:34px 0;border-left:2px solid var(--ink);padding:4px 0 4px 20px;
+    font-size:.93rem;line-height:1.8;color:#4A4234;font-weight:300;
+  }
+  .citation i{font-style:italic;color:var(--ink)}
+  .citation p+p{margin-top:14px}
+  .citation .c-mon{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--acc);display:block;margin-bottom:8px;text-transform:uppercase}
+  .mail-link{font-family:var(--mono);font-size:12.5px;letter-spacing:.08em}
+  form{border:1px solid var(--hair);background:var(--paper-2);padding:clamp(24px,3.4vw,44px)}
+  .f-field{margin-bottom:26px;position:relative}
+  .f-field label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);margin-bottom:6px}
+  .f-field input,.f-field textarea{
+    width:100%;background:transparent;border:none;border-bottom:1px solid #C4B79C;
+    font-family:var(--body);font-size:16px;color:var(--ink);padding:9px 2px;outline:none;
+    transition:border-color .25s;border-radius:0;
+  }
+  .f-field textarea{resize:vertical;min-height:92px}
+  .f-field input:focus,.f-field textarea:focus{border-color:var(--acc)}
+  .f-field.invalid input{border-color:var(--warn)}
+  .f-err{font-family:var(--mono);font-size:10px;color:var(--warn);margin-top:6px;display:none}
+  .f-field.invalid .f-err{display:block}
+  .f-submit{width:100%;justify-content:center;text-align:center}
+
+  /* ============ FOOTER ============ */
+  footer{border-top:1px solid var(--hair);padding:60px 0 40px}
+  .foot-grid{display:grid;grid-template-columns:2fr 1fr 1.2fr;gap:40px}
+  @media(max-width:820px){.foot-grid{grid-template-columns:1fr}}
+  .foot-brand{font-family:var(--serif);font-weight:600;font-size:22px}
+  .foot-desc{font-size:.92rem;color:var(--mut);margin-top:10px;max-width:36ch;font-weight:300}
+  .foot-h{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--mut);margin-bottom:14px}
+  .foot-list{list-style:none;font-family:var(--mono);font-size:11.5px;line-height:2.3;color:var(--mut)}
+  .foot-list a{text-decoration:none;transition:color .2s}
+  .foot-list a:hover{color:var(--acc)}
+  .colophon{
+    margin-top:54px;padding-top:20px;border-top:1px solid var(--hair);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--mut);
+  }
+
+  /* ============ TOAST ============ */
+  .toast{
+    position:fixed;right:24px;bottom:24px;z-index:2100;
+    background:var(--ink);color:var(--paper);
+    font-family:var(--mono);font-size:11.5px;line-height:1.8;
+    padding:16px 20px;max-width:340px;
+    transform:translateY(18px);opacity:0;pointer-events:none;
+    transition:transform .4s cubic-bezier(.2,.9,.3,1),opacity .4s;
+  }
+  .toast.show{transform:none;opacity:1}
+  .toast b{color:#9CC4D6;font-weight:500;display:block;margin-bottom:4px;letter-spacing:.12em}
+
+  /* ============ REVEAL ============ */
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none;transition:none}
+    .ring-rot{animation:none}
+    .scrollcue i{animation:none;transform:none}
+    .swap{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav id="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="Exobioma Project — inizio pagina">
+      <canvas id="navGlyph" aria-hidden="true"></canvas>
+      <span class="brand-name">Exobioma</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#visione" data-spy>Visione</a></li>
+      <li><a href="#database" data-spy>Database</a></li>
+      <li><a href="#paradigma" data-spy>Paradigma</a></li>
+      <li><a href="#estremofili" data-spy>Estremofili</a></li>
+      <li><a href="#modello" data-spy>Modello</a></li>
+      <li><a href="#percorso" data-spy>Percorso</a></li>
+      <li><a href="#roadmap" data-spy>Stato</a></li>
+    </ul>
+    <a class="nav-cta" href="#contatti">Contatti</a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Exobioma Project · framework in sviluppo · primo paper in revisione · database 2.0</p>
+      <h1>La vita non abita<br>un pianeta. <em>Lo riscrive.</em></h1>
+      <p class="hero-sub">
+        Exobioma è un progetto astrobiologico che utilizza le tolleranze ambientali di 300
+        estremofili e le stime atmosferiche sull'intero NASA Exoplanet Archive per descrivere un
+        esopianeta in base alla sua compatibilità con la vita estremofila (metrica MLS). La meta è
+        un modello che collega il metabolismo microbico alla chimica atmosferica, per ricavare
+        liste di molecole da cercare con JWST, ARIEL e HWO.
+      </p>
+      <div class="hero-meta">
+        <span>M. Marcellino · D. Locci · R. Aslam et al.</span>
+        <span>Università di Palermo — INAF Osservatorio di Palermo</span>
+        <span>Primo paper · in peer review — IJA</span>
+        <span>Database MLS 2.0 · 300 specie · in espansione</span>
+        <span>Matching · 1.338 pianeti · fino a 15 profili ciascuno</span>
+        <span>Poster HWO2026 · Massy (Parigi) · 30 nov — 4 dic</span>
+      </div>
+      <div class="hero-actions">
+        <a class="btn-solid" href="#visione">Esplora il progetto</a>
+        <a class="link-u" href="#contatti">Richiedi paper e codici
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12h15M14 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="ring-col">
+      <div class="ring-stage" id="ringStage" role="button" tabindex="0" aria-label="Rigenera il logogramma">
+        <div class="ring-px" id="ringPx">
+          <div class="ring-rot">
+            <canvas id="heroRing" aria-hidden="true"></canvas>
+          </div>
+        </div>
+      </div>
+      <p class="ring-cap">
+        <b>fig. 0 — Logogramma generativo.</b> Un contorno irregolare che si chiude percorrendo
+        l'intera circonferenza: il profilo di un pianeta, e il ciclo del progetto —
+        microbo, modello, molecola, osservazione — che, nel feedback previsto, torna su se stesso.
+        Clic per una nuova proiezione.
+      </p>
+    </div>
+  </div>
+  <div class="scrollcue" aria-hidden="true"><i></i>segui il filo</div>
+</header>
+
+<main>
+<!-- ============ §01 VISIONE ============ -->
+<section id="visione">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <canvas class="glyph" data-seed="visione" aria-hidden="true"></canvas>
+      <span class="sec-no">§ 01</span>
+      <h2>Il progetto</h2>
+      <span class="rule"></span>
+    </div>
+
+    <p class="lead reveal">
+      Un'idea che parte dalla conoscenza ecologica terrestre per arrivare alla ricerca di vita
+      aliena declinata su atmosfere, superfici e sottosuoli, mondi transienti, il cui obiettivo è
+      la verifica osservativa. Exobioma è la comunità microbica che un dato ambiente
+      extraterrestre potrebbe ospitare, selezionata in base alle sue condizioni fisiche e
+      chimiche.
+    </p>
+
+    <figure class="quote reveal">
+      <p>«Dimostrare che un alto indice di complessità della rete di reazioni atmosferiche si
+      associa alla presenza di vita — e restituirlo come lista mirata di molecole da cercare.»</p>
+      <figcaption>L'obiettivo del framework</figcaption>
+    </figure>
+
+    <div class="pillars reveal">
+      <div class="pillar">
+        <span class="pillar-no">A</span>
+        <h3 class="pillar-t">La metrica</h3>
+        <p class="pillar-d">Life-Compatible Zone e Multiparametric Life Score: non «il pianeta è abitabile?» ma un ranking continuo che nel primo paper riesce a valutare la compatibilità alla vita di una atmosfera esoplanetaria.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-no">B</span>
+        <h3 class="pillar-t">La microbiologia</h3>
+        <p class="pillar-d">Il database già in versione 2.0 contiene 300 estremofili con tolleranze estese alla chimica, composti metabolici e corredo metagenomico. Resta un work in progress con l'obiettivo di aggiungere nuove specie batteriche e nuovi parametri di sopravvivenza.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-no">C</span>
+        <h3 class="pillar-t">I modelli</h3>
+        <p class="pillar-d">Il codice che accoppia metabolismo microbico e chimica atmosferica, con il prossimo step un semplice score si traduce in una dettagliata rete planetaria di reazioni biochimiche, il ramo dinamico φ(t) già in simulazione per HWO2026, le liste dei composti organici volatili e la classificazione dei pianeti in geo-driven, photo-driven, bio-driven e hybrid-driven.</p>
+      </div>
+    </div>
+
+    <aside class="aside-note reveal">
+      <span class="dw">PERCHÉ ADESSO</span>
+      Con JWST in operazione e con ARIEL e HWO in preparazione, la caratterizzazione delle
+      atmosfere di pianeti rocciosi è la via più concreta per cercare vita. Exobioma intende
+      offrire un ponte quantitativo tra dati microbiologici e dati esoplanetari, a supporto
+      della selezione dei target.
+    </aside>
+
+    <aside class="aside-note reveal">
+      <span class="dw">COME CI COLLOCHIAMO</span>
+      Exobioma si inserisce in un filone già attivo. Gli indici di somiglianza alla Terra (ESI)
+      e il loro adattamento agli estremofili (Schulze-Makuch et al., 2011; Jagadeesh, 2018)
+      usano pochi parametri planetari con riferimento terrestre. L'analisi della topologia delle
+      reti di reazione atmosferiche come possibile biosignature è stata proposta da Solé e
+      Munteanu (2004) e sviluppata da Wong et al. (2023) e Fisher et al. (2025). Modelli che
+      accoppiano comunità microbiche e atmosfera esistono per l'Archeano e per singoli pianeti
+      (Kharecha et al., 2005; Sauterey et al., 2020; Bishop et al., 2024), e la mancanza di
+      contesto ecosistemico nei modelli di biomassa è riconosciuta da Seager et al. (2013).
+      Il nostro contributo è partire da un database di 300 specie con tolleranze
+      multiparametriche, usarlo per selezionare le comunità compatibili con ciascun ambiente e
+      applicarlo su scala di catalogo. A nostra conoscenza questa combinazione non è stata
+      finora affrontata.
+    </aside>
+  </div>
+</section>
+
+<!-- ============ §02 DATABASE ============ -->
+<section id="database">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <canvas class="glyph" data-seed="database" aria-hidden="true"></canvas>
+      <span class="sec-no">§ 02</span>
+      <h2>Il database MLS 2.0</h2>
+      <span class="rule"></span>
+    </div>
+
+    <p class="lead reveal">
+      Il database è la base del framework: per ciascuna specie raccoglie tolleranze ambientali,
+      composti associati al metabolismo e dati genomici. La versione 2.0 è consolidata e resta
+      aperta a nuove specie e nuovi parametri.
+    </p>
+
+    <div class="pipe reveal">
+      <div class="pipe-row">
+        <div class="pipe-step">
+          <canvas class="pglyph" data-seed="db-specie" data-idx="0" aria-hidden="true"></canvas>
+          <span class="pipe-k">SPECIE</span>
+          <h3>300</h3>
+          <p>Estremofili di riferimento, fotosintetici e chemiolitotrofi, con i profili di tolleranza: 60 specie per ciascuna categoria fisica (termofili, psicrofili, barofili, radioresistenti) e 15 per ciascuna categoria chimica.</p>
+        </div>
+        <div class="pipe-step">
+          <canvas class="pglyph" data-seed="db-param" data-idx="1" aria-hidden="true"></canvas>
+          <span class="pipe-k">PARAMETRI</span>
+          <h3>7 gruppi</h3>
+          <p>Temperatura, pressione, radiazione (UV e X), pH, salinità, disidratazione e attività dell'acqua, chimica ionica (solfati, perclorati): 20 grandezze per specie, più il tasso massimo di crescita.</p>
+        </div>
+        <div class="pipe-step">
+          <canvas class="pglyph" data-seed="db-composti" data-idx="2" aria-hidden="true"></canvas>
+          <span class="pipe-k">COMPOSTI</span>
+          <h3>≈ 500 / specie</h3>
+          <p>Composti associati al metabolismo, ricavati dall'annotazione genomica e dalla letteratura: il vocabolario da cui deriveranno le liste VOC.</p>
+        </div>
+        <div class="pipe-step">
+          <canvas class="pglyph" data-seed="db-record" data-idx="3" aria-hidden="true"></canvas>
+          <span class="pipe-k">RECORD</span>
+          <h3>≈ 4.200</h3>
+          <p>Soglie di tolleranza (min, opt, max) con fonte, tipo di evidenza e grado di affidabilità. Si aggiungono 454 associazioni specie–metabolismo e 256 corredi genomici.</p>
+        </div>
+      </div>
+      <p class="fig-cap">
+        <b>Stato: versione 2.0 consolidata, in espansione.</b> Alimenta la metrica MLS, il
+        paper 2 su Marte ed Encelado e — come prossimo passo — il codice di accoppiamento con
+        la chimica atmosferica. Il primo paper usa la versione 1 del database (200 specie).
+      </p>
+    </div>
+
+    <div class="reveal" style="margin-top:clamp(30px,4vw,44px)">
+      <span class="note-k">IL MATCHING SUL CATALOGO NASA</span>
+      <p class="note-body">
+        L'algoritmo di matching è stato applicato a 1.338 pianeti del NASA Exoplanet Archive per i
+        quali era disponibile o derivabile una temperatura di equilibrio, integrati con dati
+        atmosferici dove disponibili. Per ciascun pianeta, a partire da massa, raggio, temperatura
+        di equilibrio e dati della stella ospite, un approccio probabilistico genera profili
+        plausibili ma ipotetici: tre configurazioni radiative per i pianeti gassosi, fino a
+        quindici combinazioni di pressione di superficie e composizione per i pianeti rocciosi —
+        5.304 profili in totale. Ogni profilo è confrontato con le tolleranze delle 300 specie e
+        produce un punteggio di compatibilità (MLS): il risultato è un indice per 5.304
+        combinazioni pianeta–profilo, utile a ordinare i target. I profili sono stime, non
+        osservazioni; un confronto con calcoli di chimica atmosferica più dettagliati (FASTCHEM)
+        è in corso su un sottoinsieme di pianeti.
+      </p>
+    </div>
+
+    <aside class="aside-note reveal">
+      <span class="dw">L'URGENZA DI NUOVI DATI SPERIMENTALI DA TEST DI LABORATORIO</span>
+      Circa il 70% dei record non è una misura sperimentale diretta: sono stime derivate dagli
+      habitat di origine o inferenze dalla letteratura. Inoltre il database riflette le specie
+      coltivabili e meglio studiate, che sono una piccola parte della diversità microbica. Per
+      questo prevediamo un piano di validazione: test di proliferazione a basso costo sotto UV,
+      raggi X, temperatura e pressione, e profilatura genomica per consolidare i pathway
+      metabolici. Ogni misura che estende i limiti di sopravvivenza noti amplia l'insieme di
+      pianeti compatibili.
+    </aside>
+  </div>
+</section>
+
+<!-- ============ §03 PARADIGMA ============ -->
+<section id="paradigma">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <canvas class="glyph" data-seed="paradigma" aria-hidden="true"></canvas>
+      <span class="sec-no">§ 03</span>
+      <h2>Il cambio di paradigma</h2>
+      <span class="rule"></span>
+    </div>
+
+    <p class="lead reveal">
+      Per molto tempo l'abitabilità e la biosfera sono state trattate in sequenza: prima si
+      stabilisce se un pianeta può ospitare la vita, poi si discute che cosa la vita produrrebbe.
+      Auspichiamo il passaggio da una visione statica — <em>il pianeta permette la vita</em> — a
+      una dinamica — <em>la vita modella il pianeta</em>. Modelli accoppiati ecosistema–atmosfera
+      esistono per l'Archeano e per pochi pianeti. Exobioma propone di estendere questo approccio
+      a una comunità ampia di estremofili, selezionata in base ai parametri orbitali e ai dati
+      atmosferici che ci forniranno i prossimi strumenti.
+    </p>
+
+    <div class="shift reveal">
+      <div class="shift-cell">
+        <canvas id="ringBefore" aria-hidden="true"></canvas>
+        <span class="shift-lab">Visione statica</span>
+        <p class="shift-txt">Il pianeta come precondizione: un indice di compatibilità ordina i mondi.</p>
+      </div>
+      <div class="shift-arrow" aria-hidden="true">
+        <svg width="90" height="14" viewBox="0 0 90 14" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M0 7h86M80 1.5L87 7l-7 5.5"/></svg>
+      </div>
+      <div class="shift-cell">
+        <canvas id="ringAfter" aria-hidden="true"></canvas>
+        <span class="shift-lab">Visione dinamica</span>
+        <p class="shift-txt">La biosfera come parte del sistema: la vita modifica la composizione dell'atmosfera.</p>
+      </div>
+    </div>
+
+    <div class="pillars reveal">
+      <div class="pillar">
+        <span class="pillar-no">01</span>
+        <h3 class="pillar-t">LCZ &amp; MLS — la metrica</h3>
+        <p class="pillar-d">La <i>Life-Compatible Zone</i> misura quanto dell'atmosfera ha pressioni compatibili con gli estremofili noti; il <i>Multiparametric Life Score</i> fonde LCZ e profili (T, P, radiazione) in un punteggio che ordina i pianeti. L'MLS non sostituisce la zona abitabile: ne amplia il criterio, ordinando i pianeti per compatibilità con le tolleranze degli estremofili.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-no">02</span>
+        <h3 class="pillar-t">Tassonomia fluidodinamica</h3>
+        <p class="pillar-d">Ipotesi di lavoro: ad alta pressione la densità di un'atmosfera può avvicinarsi a quella della materia vivente, riducendo la sedimentazione. In questo regime le cellule potrebbero restare in sospensione con un costo energetico ridotto (regime di galleggiamento neutro). Le soglie dipendono da composizione e temperatura e sono illustrate in §05.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-no">03</span>
+        <h3 class="pillar-t">Black box termodinamica</h3>
+        <p class="pillar-d">Il metabolismo microbico è trattato come termine di sorgente nelle equazioni di continuità delle reti di reazione chimica (CRN). Il formalismo è definito (§07); l'implementazione nei codici di chimica atmosferica è in sviluppo.</p>
+      </div>
+    </div>
+
+    <figure class="quote reveal">
+      <p>«La domanda non è più <em>"la vita potrebbe sopravvivere qui?"</em> —<br>è <em>"quali evidenze chimiche produrrebbe?"</em>»</p>
+      <figcaption>IL CAMBIAMENTO DI PROSPETTIVA · BEYOND HABITABILITY</figcaption>
+    </figure>
+
+    <aside class="aside-note reveal">
+      <span class="dw">L'EREDITÀ DI DAISYWORLD — WATSON E LOVELOCK, 1983</span>
+      La regolazione planetaria emerge spontaneamente dai feedback biologici: anche un tappeto
+      di cianobatteri scuri altera l'albedo e il bilancio termico di un mondo. E la Zona Abitabile,
+      da sola, non basta: gli oceani subglaciali di Europa ed Encelado ospitano acqua liquida
+      lontano dalla stella grazie al riscaldamento mareale, e un effetto serra potente può spostare
+      il bilancio energetico di un pianeta ben oltre le distanze canoniche. Exobioma si ispira alla logica dei moderni <b>Earth System Models</b>: la vita non come
+      lista tassonomica, ma come modulo di scambio di flussi accoppiato al codice atmosferico.
+      Daisyworld agisce sull'albedo; qui l'accoppiamento riguarda i gas scambiati con
+      l'atmosfera.
+    </aside>
+  </div>
+</section>
+
+<!-- ============ §04 ESTREMOFILI ============ -->
+<section id="estremofili">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <canvas class="glyph" data-seed="estremofili" aria-hidden="true"></canvas>
+      <span class="sec-no">§ 04</span>
+      <h2>Perché gli estremofili</h2>
+      <span class="rule"></span>
+    </div>
+
+    <p class="lead reveal">
+      I limiti di vita degli estremofili sono già usati per valutare dove la vita potrebbe
+      esistere altrove (ad esempio McKay, 2014; Hallsworth et al., 2021). Exobioma li raccoglie
+      in un database strutturato e li confronta in modo sistematico con i pianeti noti.
+    </p>
+
+    <div class="pillars reveal" style="margin-top:clamp(36px,5vw,56px)">
+      <div class="pillar">
+        <span class="pillar-no">01</span>
+        <h3 class="pillar-t">Ridefiniscono l'abitabile</h3>
+        <p class="pillar-d">Le temperature di attività e crescita note vanno da circa −20 °C (<i>Psychromonas</i>, attività) a oltre 120 °C (<i>Methanopyrus kandleri</i>, 122 °C): quasi 140 gradi. A questo si aggiungono radiazioni intense e pressioni fino a ≈1400 bar. Questi limiti si sono ampliati con le scoperte, ma restano limiti: l'attività dell'acqua sotto ≈0,585, ad esempio, non è stata finora osservata tollerata (Hallsworth et al., 2021).</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-no">02</span>
+        <h3 class="pillar-t">Ingegneri planetari</h3>
+        <p class="pillar-d">I microrganismi, estremofili inclusi, partecipano ai cicli biogeochimici e, ad esempio i batteri endolitici, disgregano la roccia creando micro-habitat. Su scala planetaria possono quindi modificare l'ambiente in cui vivono.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-no">03</span>
+        <h3 class="pillar-t">Vivono dove possiamo guardare</h3>
+        <p class="pillar-d">L'atmosfera terrestre ospita microrganismi attivi: nelle goccioline di nube e di nebbia sono stati osservati crescita e degradazione di composti organici come la formaldeide (Amato et al., 2007; Cao et al., 2026). Per le nubi di Venere sono stati proposti cicli di vita aerei, ma la bassissima attività dell'acqua nelle gocce di acido solforico li rende problematici (Hallsworth et al., 2021). Esperimenti con <i>E. coli</i> mostrano che la composizione del gas circostante (H₂, CO₂, CH₄) influenza la crescita [VERIFICA].</p>
+      </div>
+    </div>
+
+    <div class="temp-scroll reveal">
+      <div class="temp-axis" role="img" aria-label="Termometro della vita: da circa meno 20 gradi di Psychromonas (attività) a oltre 120 gradi di Methanopyrus, con i range di crescita dei prototipi Alpha, Beta e Delta.">
+        <div class="temp-bar"></div>
+        <div class="temp-seg" style="left:21.9%;width:21.9%"></div>
+        <div class="temp-seg" style="left:43.75%;width:21.9%"></div>
+        <span class="temp-tick" style="left:6.25%"></span>
+        <span class="temp-tick hot" style="left:95%"></span>
+        <div class="temp-lab up edge-l" style="left:6.25%"><span class="t">≈ −20 °C</span><span class="n">Psychromonas · attività</span><i></i></div>
+        <div class="temp-lab dn" style="left:18.75%"><i></i><span class="t">≈ 0 °C</span><span class="n">Chlamydomonas nivalis · Δ</span></div>
+        <div class="temp-lab up" style="left:32.8%"><span class="t">5 – 40 °C</span><span class="n">Synechocystis · Α</span><i></i></div>
+        <div class="temp-lab dn" style="left:54.7%"><i></i><span class="t">40 – 75 °C</span><span class="n">Mastigocladus · Β</span></div>
+        <div class="temp-lab dn edge-r hot" style="left:95%"><i></i><span class="t">&gt; 120 °C</span><span class="n">Methanopyrus</span></div>
+        <div class="temp-scale"><span>−30 °C</span><span>+130 °C</span></div>
+      </div>
+    </div>
+    <p class="fig-cap reveal">
+      <b>Fig. 1 — Il termometro della vita.</b> Range di crescita annotati nel database di tolleranze:
+      circa 140 °C separano gli estremi. Le lettere rimandano ai prototipi metabolici del §06.
+      In pressione, il limite osservato finora è ≈1400 bar (<i>Thermococcus piezophilus</i>).
+    </p>
+  </div>
+</section>
+
+<!-- ============ §05 REGIMI ============ -->
+<section id="regimi">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <canvas class="glyph" data-seed="regimi" aria-hidden="true"></canvas>
+      <span class="sec-no">§ 05</span>
+      <h2>Pressione, densità e sospensione: un modello illustrativo</h2>
+      <span class="rule"></span>
+    </div>
+
+    <p class="lead reveal">
+      Un modello illustrativo con una sola variabile: il rapporto tra la densità
+      dell'atmosfera e quella della materia vivente (ρ<sub>bio</sub> ≈ 10³ kg/m³).
+      Distingue tre regimi di sospensione, oltre al limite piezofilo. La fascia compatibile con
+      la vita nota — la <em>Life-Compatible Zone</em> — è la parentesi a destra: il suo volume è
+      il primo ingresso dell'MLS.
+    </p>
+    <p class="stokes reveal" data-tex="v_{s}\,=\,\tfrac{2}{9}\,\dfrac{\rho_{bio}-\rho_{atm}}{\mu}\,g\,R^{2}" data-fb="v_s = (2/9) · (Δρ/μ) · g · R²" data-display></p>
+    <p class="eq-note reveal">dove R è il raggio della cellula e μ la viscosità del gas.</p>
+
+    <div class="reg-grid" style="margin-top:clamp(36px,5vw,56px)">
+      <div class="reg-info reveal" id="regInfo">
+        <div class="reg-letter" id="regLetter">A</div>
+        <h3 id="regName">Aerodinamico</h3>
+        <p class="reg-range" id="regRange">P &lt; 100 atm</p>
+        <p class="reg-desc" id="regDesc"></p>
+        <dl class="readout">
+          <div><dt>Pressione</dt><dd id="roP">—</dd></div>
+          <div><dt>ρ atmosferica</dt><dd id="roRho">—</dd></div>
+          <div><dt>Sedimentazione v<sub>s</sub></dt><dd id="roVs">—</dd></div>
+          <div><dt>Colonna LCZ</dt><dd id="roLcz">—</dd></div>
+        </dl>
+        <p class="reg-hint">Trascina sulla colonna · frecce ↑ ↓ per regole fini</p>
+      </div>
+      <div class="reveal">
+        <canvas id="regimeCanvas" tabindex="0" role="slider" aria-label="Selettore di pressione atmosferica" aria-valuemin="1" aria-valuemax="2000"></canvas>
+        <p class="fig-cap">
+          <b>Fig. 2 — La colonna atmosferica.</b> Modello illustrativo isotermo con ρ<sub>atm</sub> ≈ 1,2 · P
+          (aria a circa 290 K), valido da 1 a 2000 atm: con H₂, CO₂ o altre composizioni le soglie
+          cambiano, e la linea di galleggiamento neutro a ≈833 atm vale solo per questo caso.
+          v<sub>s</sub> relativa al valore in superficie. La parentesi teal delimita la <b>LCZ</b>, la porzione
+          di colonna con pressioni compatibili con gli estremofili noti, da 1 a ≈1380 atm (≈1400 bar ·
+          140 MPa, <i>Thermococcus piezophilus</i>): è espressa come multiplo della massa di colonna
+          terrestre (1 atm) ed è il primo ingresso dell'MLS, il punteggio che ordina i pianeti. Nel
+          modello del primo paper la shell LCZ è chiusa tra 1 mbar e 100 bar.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ §06 PROTOTIPI ============ -->
+<section id="prototipi">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <canvas class="glyph" data-seed="prototipi" aria-hidden="true"></canvas>
+      <span class="sec-no">§ 06</span>
+      <h2>I prototipi metabolici</h2>
+      <span class="rule"></span>
+    </div>
+
+    <p class="lead reveal">
+      Le 300 specie sono raggruppate in quattro prototipi funzionali, in base alla luce che
+      assorbono e alla temperatura a cui crescono. Il raggruppamento per funzione metabolica
+      affianca la tassonomia: per i flussi di gas contano le funzioni, più dei nomi delle
+      specie.
+    </p>
+
+    <div class="reveal" style="margin-top:clamp(36px,5vw,56px)">
+      <div class="ptabs" role="tablist" aria-label="Prototipi metabolici">
+        <button class="active" role="tab" data-p="alpha" aria-selected="true">Α — Alpha</button>
+        <button role="tab" data-p="beta" aria-selected="false">Β — Beta</button>
+        <button role="tab" data-p="gamma" aria-selected="false">Γ — Gamma</button>
+        <button role="tab" data-p="delta" aria-selected="false">Δ — Delta</button>
+      </div>
+      <div class="proto-grid">
+        <div id="protoInfo">
+          <div class="proto-g" id="pG">Α</div>
+          <h3 class="proto-name" id="pName"></h3>
+          <p class="proto-org" id="pOrg"></p>
+          <dl class="proto-dl">
+            <div><dt>Temperatura</dt><dd id="pT"></dd></div>
+            <div><dt>Pigmenti</dt><dd id="pPig"></dd></div>
+            <div><dt>Picco</dt><dd id="pPk"></dd></div>
+            <div><dt>Strategia</dt><dd id="pStr"></dd></div>
+          </dl>
+          <p class="proto-note" id="pNote"></p>
+        </div>
+        <div>
+          <div class="spec-legend">
+            <span><span class="sw" style="border-color:#8B7A5C"></span>Stella G · 5778 K</span>
+            <span><span class="sw" style="border-color:#175E7D"></span>Nana M · 2600 K</span>
+            <span><span class="sw" style="border-top-style:solid;border-color:#2A2318"></span>Banda prototipo</span>
+          </div>
+          <canvas id="specCanvas"></canvas>
+          <p class="fig-cap">
+            <b>Fig. 3 — Spettri stellari e bande dei prototipi.</b> Flussi normalizzati (corpo nero) e
+            bande caratteristiche dei prototipi. Su una nana rossa il massimo fotonico scivola oltre
+            1 μm, dominio del prototipo Gamma; è un'ipotesi in letteratura che pianeti attorno a
+            stelle M possano avere superfici non verdi. Picchi indicativi, a scopo illustrativo.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ §07 MODELLO ============ -->
+<section id="modello">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <canvas class="glyph" data-seed="modello" aria-hidden="true"></canvas>
+      <span class="sec-no">§ 07</span>
+      <h2>La black box termodinamica</h2>
+      <span class="rule"></span>
+    </div>
+
+    <div class="model-grid">
+      <div class="reveal">
+        <p class="note-body">
+          Per il termine di sorgente la cellula è trattata come <strong>black box termodinamica</strong>:
+          contano i flussi in ingresso e i gas in uscita, nelle equazioni di continuità delle CRN
+          atmosferiche. Il dettaglio dei pathway, ricavato dal corredo genomico, serve a determinare
+          le rese stechiometriche.
+          Passa il puntatore sui simboli per leggere il loro ruolo.
+        </p>
+        <div class="terms">
+          <div class="term-row" data-k="tB" tabindex="0">
+            <span class="sym" data-tex="B(t)" data-fb="B(t)"></span>
+            <span class="term-name">Biomassa attiva</span>
+            <span class="term-desc">Grammi al metro quadrado di vita che, in quell'istante, respira e sintetizza.</span>
+          </div>
+          <div class="term-row" data-k="tMu" tabindex="0">
+            <span class="sym" data-tex="\mu(T,\,P,\,I_{\lambda})" data-fb="μ(T, P, Iλ)"></span>
+            <span class="term-name">Tasso di crescita</span>
+            <span class="term-desc">La risposta fisiologica: temperatura, pressione e sovrapposizione tra spettro stellare e assorbimento del pigmento.</span>
+          </div>
+          <div class="term-row" data-k="tY" tabindex="0">
+            <span class="sym" data-tex="Y_{i/\mathrm{bio}}" data-fb="Y i/bio"></span>
+            <span class="term-name">Resa stechiometrica</span>
+            <span class="term-desc">Molecole del gas <i>i</i> rilasciate (o assorbite, con segno negativo) per unità di biomassa prodotta.</span>
+          </div>
+          <div class="term-row" data-k="tPhi" tabindex="0">
+            <span class="sym" data-tex="\phi_{\mathrm{inhib}}" data-fb="φ inhib"></span>
+            <span class="term-name">Inibizione</span>
+            <span class="term-desc">La penalità ambientale: UV, estremi di pressione, aridità, tossicità.</span>
+          </div>
+          <div class="term-row" data-k="tF" tabindex="0">
+            <span class="sym" data-tex="\mathbf{F_{i}(t)}" data-fb="F i(t)"></span>
+            <span class="term-name">Flusso biologico</span>
+            <span class="term-desc">Ciò che la black box scambia con l'atmosfera (emissione o consumo): l'unico termine che la vita aggiunge al codice.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <div class="eqbox">
+          <span class="eq-label">Eq. 1 — Flusso biologico</span>
+          <div id="eq1" data-tex="F_{i}(t)\;=\;\htmlClass{tB}{B(t)}\,\cdot\,\htmlClass{tMu}{\mu\bigl(T,\,P,\,I_{\lambda}\bigr)}\,\cdot\,\htmlClass{tY}{Y_{i/\mathrm{bio}}}\,\cdot\,\htmlClass{tPhi}{\phi_{\mathrm{inhib}}}" data-fb="F_i(t) = B(t) · μ(T, P, I_λ) · Y_i/bio · φ_inhib"></div>
+        </div>
+        <div class="eqbox">
+          <span class="eq-label">Eq. 2 — Accoppiamento con la CRN</span>
+          <div id="eq2" data-tex="\frac{d[C]}{dt}\;=\;\text{Trasporto}\;+\;\text{Fotochimica}\;+\;\text{Chimica termica}\;+\;\htmlClass{tF}{\mathbf{F_{i}(t)}}" data-fb="d[C]/dt = Trasporto + Fotochimica + Chimica termica + F_i(t)"></div>
+          <p class="eq-note">
+            L'equazione di continuità atmosferica: trasporto, fotochimica, chimica termica —
+            e in grassetto, l'unico contributo della biosfera.
+          </p>
+        </div>
+        <p class="ilam">
+          dove&nbsp;<span data-tex="I_{\lambda}=\int L_{\lambda}(\lambda)\,A_{\mathrm{pig}}(\lambda)\,d\lambda" data-fb="I_λ = ∫ L_λ(λ)·A_pig(λ) dλ"></span>&nbsp;—
+          la sovrapposizione tra la luce della stella e l'assorbimento del pigmento.
+        </p>
+        <p class="eq-foot">Accoppiamento previsto con i codici di chimica atmosferica <b>VULCAN</b> e <b>KINETICS</b>: i flussi di gas derivati dai metabolismi delle specie compatibili con un ambiente entrano come termine di sorgente nella rete di reazioni dell'atmosfera (§08).</p>
+        <p class="eq-foot">Stato: formalismo definito; implementazione in sviluppo. Primo test previsto: ricostruire i flussi noti di un bioma terrestre (la degradazione di formaldeide nelle nebbie, Cao et al., 2026).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ §08 PERCORSO ============ -->
+<section id="percorso">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <canvas class="glyph" data-seed="percorso" aria-hidden="true"></canvas>
+      <span class="sec-no">§ 08</span>
+      <h2>Dal microbo all'osservazione</h2>
+      <span class="rule"></span>
+    </div>
+
+    <p class="lead reveal">
+      Dal microbo al modello, dal modello alla molecola, dalla molecola all'osservazione:
+      il percorso che collega dati microbiologici, modelli atmosferici e osservazioni, con ritorno
+      dei risultati nel database.
+    </p>
+
+    <div class="pipe reveal">
+      <div class="pipe-row">
+        <div class="pipe-step">
+          <canvas class="pglyph" data-seed="pipe-microbo" data-idx="0" aria-hidden="true"></canvas>
+          <span class="pipe-k">01 · MICROBO</span>
+          <h3>Il database</h3>
+          <p>300 estremofili con parametri di tolleranza, composti associati e corredo genomico: il substrato da cui derivare le reti biochimiche, usando come riferimento la rete metabolica di <i>E. coli</i>, la meglio annotata.</p>
+        </div>
+        <div class="pipe-step">
+          <canvas class="pglyph" data-seed="pipe-modello" data-idx="1" aria-hidden="true"></canvas>
+          <span class="pipe-k">02 · MODELLO</span>
+          <h3>La CRN atmosferica</h3>
+          <p>I flussi di gas derivati dai metabolismi delle specie compatibili alimentano la rete di reazioni dell'atmosfera. È il codice in sviluppo, prossimo passo del framework.</p>
+        </div>
+        <div class="pipe-step">
+          <canvas class="pglyph" data-seed="pipe-molecola" data-idx="2" aria-hidden="true"></canvas>
+          <span class="pipe-k">03 · MOLECOLA</span>
+          <h3>La lista dei VOC</h3>
+          <p>L'algoritmo individua le specie volatili che più differiscono rispetto all'atmosfera abiotica corrispondente: candidate come tracce da cercare, pianeta per pianeta.</p>
+        </div>
+        <div class="pipe-step">
+          <canvas class="pglyph" data-seed="pipe-hwo" data-idx="3" aria-hidden="true"></canvas>
+          <span class="pipe-k">04 · OSSERVAZIONE</span>
+          <h3>La validazione HWO</h3>
+          <p>Le liste guidano la scelta dei target e delle bande spettrali da osservare con JWST, ARIEL e HWO.<span class="chip chip-plan">HWO</span></p>
+        </div>
+      </div>
+      <div class="pipe-return"><span>FEEDBACK PREVISTO — GLI SPETTRI OSSERVATI SERVIRANNO A RICALIBRARE MODELLO E DATABASE</span></div>
+      <p class="fig-cap">
+        <b>Fig. 4 — Il percorso multiscala.</b> Da decenni di microbiologia a una lista di verifica
+        molecolare calibrata pianeta per pianeta: la «lista della spesa» che Exobioma intende
+        fornire a HWO. Quando disponibili, le osservazioni rientreranno nel modello.
+      </p>
+    </div>
+
+    <aside class="aside-note reveal">
+      <span class="dw">BASTA UNA TRACCIA — LA SENSIBILITÀ DELLA RETE</span>
+      Fisher et al. (2025) mostrano che l'introduzione di CFC-12, un gas industriale, modifica in
+      modo misurabile la rete di reazioni di un'atmosfera terrestre simulata. Un input piccolo ma
+      persistente, industriale o biologico, può quindi <b>cascare attraverso l'intera atmosfera</b>
+      e lasciare una firma di sistema.
+    </aside>
+
+    <aside class="aside-note reveal">
+      <span class="dw">IL RAMO DINAMICO HA GIÀ CODICE</span>
+      Il ramo dinamico è già implementato: i codici <b>bioma1–bioma4</b> simulano tre scenari
+      (atmosfera abiotica, bioma lineare, successione ecologica) e il motore <b>m-temporal</b>
+      (mt_orbit, mt_engine, mt_run, mt_animate) produce le traiettorie φ(t), le animazioni e le
+      diagnostiche ROC. Codici e output sono disponibili su richiesta.
+    </aside>
+  </div>
+</section>
+
+<!-- ============ §09 IL PROGETTO ADESSO ============ -->
+<section id="roadmap">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <canvas class="glyph" data-seed="roadmap" aria-hidden="true"></canvas>
+      <span class="sec-no">§ 09</span>
+      <h2>Il progetto adesso</h2>
+      <span class="rule"></span>
+    </div>
+
+    <p class="lead reveal" style="margin-bottom:clamp(36px,5vw,56px)">
+      Lo stato attuale del framework: cosa è consolidato, cosa è in revisione o in scrittura,
+      cosa deve ancora essere fatto. Gli anelli indicano un avanzamento qualitativo, non una
+      misura.
+    </p>
+
+    <div class="phase reveal">
+      <div><canvas class="rglyph" data-seed="p1" data-pct="0.9" aria-hidden="true"></canvas></div>
+      <div>
+        <div class="phase-top">
+          <span class="mono phase-k">Paper 1 · RAMO STATICO</span>
+          <span class="mono phase-when">SOTTOMESSO · IJA</span>
+          <span class="chip chip-rev">IN REVIEW</span>
+        </div>
+        <h3>Beyond Habitability</h3>
+        <p>Il paper che introduce la metrica (Life-Compatible Zone e MLS) è stato sottomesso
+        all'<i>International Journal of Astrobiology</i> ed è in revisione. Il metodo è stato
+        presentato al workshop HWO di Roma.</p>
+        <ul class="mile">
+          <li>Metrica MLS e LCZ definita e sottomessa</li>
+          <li>Database 2.0 a 300 specie consolidato (§02)</li>
+          <li>Risposta ai referee attesa nei prossimi mesi</li>
+          <li>Matching su 1.338 pianeti del NASA Exoplanet Archive, fino a 15 profili per pianeta: completato</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase reveal">
+      <div><canvas class="rglyph" data-seed="p2" data-pct="0.55" aria-hidden="true"></canvas></div>
+      <div>
+        <div class="phase-top">
+          <span class="mono phase-k">Paper 2 · ESTENSIONE AMBIENTALE</span>
+          <span class="mono phase-when">IN SCRITTURA</span>
+          <span class="chip chip-live">IN CORSO</span>
+        </div>
+        <h3>Oltre l'atmosfera: Marte ed Encelado</h3>
+        <p>La metrica nasce per le atmosfere; il secondo paper l'estende agli ambienti di
+        superficie e sotto-superficie, con due casi di studio: il sottosuolo marziano e
+        l'ambiente sub-glaciale di Encelado.</p>
+        <ul class="mile">
+          <li>MLS per ambienti di superficie e sotto-superficie</li>
+          <li>Marte: regolite, nicchie ipogee, protezione dalle radiazioni</li>
+          <li>Encelado: criovulcanismo, gradienti chimici, energia disponibile</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase reveal">
+      <div><canvas class="rglyph" data-seed="p3" data-pct="0.7" aria-hidden="true"></canvas></div>
+      <div>
+        <div class="phase-top">
+          <span class="mono phase-k">RAMO DINAMICO · POSTER</span>
+          <span class="mono phase-when">HWO2026 · MASSY (PARIGI) · 30 NOV — 4 DIC</span>
+          <span class="chip chip-live">IN CORSO</span>
+        </div>
+        <h3>L'exobioma variabile nel tempo</h3>
+        <p>La declinazione dinamica del framework: φ(t), lag ecologico e switching qualitativo,
+        simulati dai codici bioma1–bioma4 e dal motore temporale m-temporal. Abstract
+        «Time-variable exobiome as a discriminant against abiotic atmospheres» e poster con QR
+        verso questa pagina. Una possibile estensione riguarda Marte ed Encelado con ambienti
+        variabili nel tempo. La variabilità temporale come biosignature è stata proposta in
+        precedenza (ad es. Olson et al., 2018, sulla stagionalità); qui la combiniamo con una
+        sorgente biologica derivata dal database.</p>
+        <ul class="mile">
+          <li>bioma1–bioma4 + mt_orbit, mt_engine, mt_run, mt_animate</li>
+          <li>Test bayesiano del discriminante su simulazioni: efficienza ≈70%, falsi positivi ≲5%</li>
+          <li>Abstract · poster in allestimento per HWO2026</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase reveal">
+      <div><canvas class="rglyph" data-seed="p4" data-pct="0.1" aria-hidden="true"></canvas></div>
+      <div>
+        <div class="phase-top">
+          <span class="mono phase-k">RAMO BIOGEOCHIMICO</span>
+          <span class="mono phase-when">IL PROSSIMO CODICE</span>
+          <span class="chip chip-next">DA COSTRUIRE</span>
+        </div>
+        <h3>Il modello biochimico atmosferico</h3>
+        <p>Il passo successivo è scrivere il codice che accoppia il metabolismo degli estremofili alla
+        chimica atmosferica e formalizzare come le reti di reazione si instaurano in un'atmosfera.
+        Su questa base verificheremo se esiste una relazione tra MLS e complessità della rete,
+        stimeremo i falsi positivi abiotici, produrremo liste di molecole per ciascun pianeta e
+        classificheremo i pianeti in geo-driven, photo-driven, bio-driven e hybrid-driven.</p>
+        <ul class="mile">
+          <li>Codice metabolico accoppiato alla CRN atmosferica</li>
+          <li>Test della relazione MLS ↔ complessità di rete, con confronto con modelli abiotici (null model)</li>
+          <li>Confronto con le metriche di rete esistenti (Solé e Munteanu, 2004; Wong et al., 2023; Fisher et al., 2025)</li>
+          <li>Short-list VOC come output operativo per HWO e ARIEL</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase reveal">
+      <div><canvas class="rglyph" data-seed="p6" data-pct="0.15" aria-hidden="true"></canvas></div>
+      <div>
+        <div class="phase-top">
+          <span class="mono phase-k">RAMO GENOMICO</span>
+          <span class="mono phase-when">PRIMI TEST</span>
+          <span class="chip chip-next">PRELIMINARE</span>
+        </div>
+        <h3>Dalla specie alla funzione: la metagenomica</h3>
+        <p>Il database associa a ciascuna specie il proprio corredo genomico. Primi test
+        preliminari indicano che è possibile descrivere come i geni — e quindi le funzioni
+        metaboliche — si distribuiscono nelle nicchie di un'atmosfera, passando da una descrizione
+        per specie a una per funzione. Si tratta di una predizione basata sulle tolleranze delle
+        specie portatrici, non di un'osservazione: sarà verificata confrontandola con dati
+        metagenomici ambientali di nubi e nebbie. L'obiettivo è capire quanto i risultati
+        dipendano dal numero e dalla composizione delle specie rappresentate.</p>
+        <ul class="mile">
+          <li>Stratificazione genica delle nicchie atmosferiche: test preliminari</li>
+          <li>Validazione su metagenomi ambientali (nubi, nebbie)</li>
+          <li>Passaggio da pathway per specie a moduli funzionali per nicchia</li>
+        </ul>
+      </div>
+    </div>
+    <div class="phase reveal">
+      <div><canvas class="rglyph" data-seed="p5" data-pct="0.05" aria-hidden="true"></canvas></div>
+      <div>
+        <div class="phase-top">
+          <span class="mono phase-k">RAMO OSSERVATIVO</span>
+          <span class="mono phase-when">ORIZZONTE · CON E DOPO HWO</span>
+          <span class="chip chip-hz">ORIZZONTE</span>
+        </div>
+        <h3>Smoking gun — la verifica</h3>
+        <p>Spettri ad alta risoluzione sui target ad alto MLS: confrontare le molecole osservate
+        con le liste VOC derivate dalle CRN estremofile, contro il null model della chimica
+        abiotica. Il feedback loop del percorso multiscala (§08) si chiude sui dati reali.</p>
+        <ul class="mile">
+          <li>Selezione dei target sulla base del ranking MLS</li>
+          <li>Confronto liste predette vs firme osservate: JWST, ARIEL, spettrografi da terra</li>
+        </ul>
+      </div>
+    </div>
+
+    <aside class="aside-note reveal">
+      <span class="dw">LIMITI NOTI</span>
+      I risultati attuali vanno letti con questi limiti. (1) Circa il 70% dei record del database
+      è una stima. (2) Il database riflette le specie coltivabili e meglio studiate, non la
+      diversità microbica totale. (3) I profili atmosferici sono ipotetici, generati con un
+      approccio probabilistico da pochi parametri osservati. (4) L'accoppiamento tra metabolismo e
+      chimica atmosferica è definito nel formalismo, ma non ancora implementato. (5) La
+      stratificazione genica è un test preliminare e predittivo. Dichiarare questi limiti è parte
+      del metodo: ciascuno corrisponde a una verifica già pianificata.
+    </aside>
+
+    <aside class="aside-note reveal">
+      <span class="dw">RIFERIMENTI CITATI</span>
+      Amato et al. (2007), <i>Atmos. Chem. Phys.</i> 7, 4159 · Cao et al. (2026), <i>mBio</i>
+      17(6), e00463-26 · Fisher, Janin e Walker (2025), <i>Planetary Science Journal</i> ·
+      Hallsworth et al. (2021), <i>Nature Astronomy</i> 5, 665 · Hegde e Kaltenegger (2013),
+      <i>ApJ</i> 777, 148 · Jagadeesh (2018), arXiv:1801.06341 · Kharecha, Kasting e Siefert
+      (2005), <i>Geobiology</i> 3, 53 · Kiang et al. (2007), <i>ApJ</i> 669, 1264 · Khaled et al.
+      (2021), <i>Atmos. Chem. Phys.</i> 21, 3123 · McKay (2014), <i>Exoplanets and Extraterrestrial
+      Life</i> · Olson et al. (2018), arXiv:1806.04592 · Solé e Munteanu (2004),
+      arXiv:cond-mat/0406137 · Schulze-Makuch et al. (2011), <i>Astrobiology</i> 11, 1041 ·
+      Sauterey et al. (2020), <i>Nature Communications</i> 11, 2705 · Seager, Bains e Hu (2013),
+      <i>ApJ</i> 775, 104 · Wong et al. (2023), <i>JGR Planets</i>, doi:10.1029/2022JE007658.
+      [VERIFICA: controllare autori, volumi e pagine prima della pubblicazione.]
+    </aside>
+  </div>
+</section>
+
+<!-- ============ §10 CONTATTI ============ -->
+<section id="contatti">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <canvas class="glyph" data-seed="contatti" aria-hidden="true"></canvas>
+      <span class="sec-no">§ 10</span>
+      <h2>Contatti</h2>
+      <span class="rule"></span>
+    </div>
+
+    <div class="contact-grid">
+      <div class="reveal">
+        <p class="lead">Exobioma avanza alla velocità della sua rete.</p>
+        <p class="note-body" style="margin-top:22px">
+          Se lavori su atmosfere, CRN, estremofili, modelli climatici o sulla preparazione
+          scientifica di HWO e ARIEL — o se vedi semplicemente un buco nel framework —
+          saremo lieti di confrontarci. Il white paper, il paper sottomesso e i codici del ramo
+          dinamico sono disponibili su richiesta.
+        </p>
+        <div class="citation">
+          <span class="c-mon">Citazioni</span>
+          <p>
+            Marcellino, M., Locci, D., Aslam, R., Ciaravella, A., Jiménez-Escobar, A., Mangione, A.,
+            Micela, G., Cecchi Pestellini, C. (2026).<br>
+            <i>Beyond habitability: how extremophiles shape our understanding of life's potential.</i><br>
+            Sottomesso — <i>International Journal of Astrobiology</i>, in peer review.
+          </p>
+          <p>
+            Marcellino, M. (2026).<br>
+            <i>Time-variable exobiome as a discriminant against abiotic atmospheres.</i><br>
+            Abstract e poster — HWO2026, Massy (Parigi), 30 nov — 4 dic 2026.
+          </p>
+          <p>
+            Exobioma Project.<br>
+            <i>From Habitability Indices to Dynamic Biosphere Modeling — Comprehensive White Paper</i>
+            (versione 2.0, 2026).
+          </p>
+        </div>
+        <a class="link-u mail-link" href="mailto:info@exobioma.org">info@exobioma.org</a>
+      </div>
+
+      <form id="contactForm" class="reveal" novalidate>
+        <div class="f-field" data-f="nome">
+          <label for="f-nome">Nome e affiliazione</label>
+          <input type="text" id="f-nome" autocomplete="name" placeholder="Es. Dr.ssa M. Ferretti — INAF Roma">
+          <p class="f-err">Campo obbligatorio.</p>
+        </div>
+        <div class="f-field" data-f="email">
+          <label for="f-email">Email</label>
+          <input type="email" id="f-email" autocomplete="email" placeholder="nome@istituto.it">
+          <p class="f-err">Inserisci un indirizzo valido.</p>
+        </div>
+        <div class="f-field" data-f="msg">
+          <label for="f-msg">Messaggio</label>
+          <textarea id="f-msg" placeholder="Il tuo contributo: dati, modelli, critiche, idee…"></textarea>
+        </div>
+        <button type="submit" class="btn-solid f-submit">Apri nel client di posta</button>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand">Exobioma Project</div>
+        <p class="foot-desc">Un framework che mette in relazione le tolleranze degli estremofili, le atmosfere degli esopianeti e le osservazioni astrofisiche.</p>
+      </div>
+      <div>
+        <div class="foot-h">Indice</div>
+        <ul class="foot-list">
+          <li><a href="#visione">§01 — Visione</a></li>
+          <li><a href="#database">§02 — Database</a></li>
+          <li><a href="#paradigma">§03 — Paradigma</a></li>
+          <li><a href="#estremofili">§04 — Estremofili</a></li>
+          <li><a href="#regimi">§05 — Pressione e sospensione</a></li>
+          <li><a href="#prototipi">§06 — Prototipi metabolici</a></li>
+          <li><a href="#modello">§07 — Modello</a></li>
+          <li><a href="#percorso">§08 — Percorso</a></li>
+          <li><a href="#roadmap">§09 — Stato</a></li>
+          <li><a href="#contatti">§10 — Contatti</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="foot-h">Sede</div>
+        <ul class="foot-list">
+          <li>INAF — Osservatorio Astronomico di Palermo</li>
+          <li>Piazza del Parlamento, 1 — 90129 Palermo</li>
+          <li>Workshop HWO — Roma, 2025</li>
+          <li>Poster HWO2026 — Massy (Parigi)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="colophon">
+      <span>© 2025–2026 EXOBIOMA PROJECT — MARCELLINO · LOCCI · ASLAM ET AL.</span>
+      <span>LOGOGRAMMI GENERATIVI SU CANVAS — NESSUNA IMMAGINE IMPORTATA</span>
+      <span>CORMORANT GARAMOND · SPECTRAL · IBM PLEX MONO</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <b id="toastTitle"></b><span id="toastMsg"></span>
+</div>
+
+<script defer>
+(function(){
+"use strict";
+const TAU = Math.PI*2;
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const INK="42,35,24", ACC="#175E7D", WARN="#A44E2E", HAIR="#D8CDB8", MUT="#756A57";
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+
+/* ============================================================
+   UTILITÀ — RNG con seed e rumore periodico
+============================================================ */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function hashSeed(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function periodicNoise(rand,terms,maxK){
+  const ts=[];let norm=0;
+  for(let i=0;i<terms;i++){
+    const k=1+Math.floor(rand()*maxK);
+    const a=Math.pow(1/k,.9)*(.4+rand()*.8);
+    ts.push({k,a,ph:rand()*TAU});norm+=a;
+  }
+  return th=>{let s=0;for(const t of ts)s+=t.a*Math.sin(t.k*th+t.ph);return s/norm};
+}
+
+/* ============================================================
+   MOTORE INKOGRAMMA (v3) — riscritto da zero su foglio bianco.
+   Logogrammi circolari in stile Arrival.
+
+   Cosa cambia rispetto alla v2, e perché prima erano instabili:
+   1. In v2 lo spessore del nastro alla fine di una ProgressArc
+      veniva moltiplicato per un taper calcolato come (end - th):
+      all'ultimo campione, per arrotondamento binario, end - th
+      diventava -1e-15 → raggio negativo → ctx.arc() lanciava
+      IndexSizeError. L'eccezione usciva dal passo requestAnimationFrame
+      e la catena si spegneva: anello fermo a metà.
+      Qui ogni raggio passa da rad(), che non restituisce mai
+      un valore negativo o degenere.
+   2. In v2 draw() poteva lanciare verso l'alto: un solo glifo bugiato
+      interrompeva il ciclo IntersectionObserver e gli anelli successivi
+      nello stesso batch non partivano affatto. Qui render() cattura,
+      azzera il danno e restituisce false.
+   3. In v2 l'anello veniva osservato e poi subito "unobserve": se in
+      quel momento il canvas era largo 0 (layout non assestato), il
+      glifo restava bianco per sempre. Qui il trigger non consuma
+      l'osservazione finché play() non ha davvero iniziato, e play()
+      rimanda la richiesta a fit() se la larghezza è 0.
+   4. Reti di sicurezza: sweep periodico, pageshow, visibilitychange,
+      cambio di devicePixelRatio, contesto canvas perso.
+   5. Sui progressi minimi (le fasi al 5–15 %) il logogramma mostra
+      una traccia fantasma: prima era quasi invisibile.
+============================================================ */
+const INK_RGB="rgb("+INK+")";
+const PASS3=[[2.05,.05],[1.25,.15],[.62,.52]];      // [amplificazione spessore, alpha]
+const rad=v=>v>1e-7?v:0;                            // raggio canvas: sempre >= 0, mai degenere
+
+class Logogram{
+  constructor(cv,seed,opts){
+    this.cv=cv||null;
+    this.o=Object.assign({
+      alpha:1,bands:2,splat:7,sat:.75,inner:.13,r:.36,thin:1,ghost:.16
+    },opts||{});
+    this.seed=Logogram.fixSeed(seed);
+    this.p=0;
+    this.size=0;
+    this.dpr=0;
+    this.ctx=null;
+    this.played=false;
+    this.renderErrors=0;
+    this._raf=null;
+    this._queued=null;
+    this.shape();
+    this.fit();
+  }
+  static fixSeed(v){const n=v|0;return n?((n>>>0)||1):1}
+
+  /* ---- geometria deterministica: costruirla non tocca il canvas ---- */
+  shape(){
+    const rnd=mulberry32(this.seed);
+    this.nR=periodicNoise(rnd,4,4);      // raggio medio del nastro
+    this.nJ=periodicNoise(rnd,3,6);      // jitter fine
+    this.nT=periodicNoise(rnd,5,9);      // calligrafia (spessore)
+    this.bands=[];
+    const RF=[.76,1.16,.6];
+    for(let i=0;i<this.o.bands;i++){
+      this.bands.push({
+        rf:RF[i%3]+(rnd()-.5)*.08, start:rnd()*TAU, len:1+rnd()*1.7,
+        dir:rnd()<.5?-1:1, thin:.4+rnd()*.35, noise:periodicNoise(rnd,3,5),
+        delay:.14+i*.16
+      });
+    }
+    this.splats=[];
+    for(let i=0;i<this.o.splat;i++){
+      this.splats.push({th:rnd()*TAU, rOrbit:.84+rnd()*.3, rDot:(.5+rnd()*rnd()*2.4)/320,
+        alpha:.2+rnd()*.45, appear:rnd()*.85});
+    }
+    this.hasRing=rnd()<this.o.sat;
+    this.ringTh=rnd()*TAU;
+    this.ringOrbit=1.12+rnd()*.2;
+    this.ringR=.05+rnd()*.05;
+    this.ringAt=.62+rnd()*.25;
+  }
+
+  /* ---- backing store coerente con il box CSS ---- */
+  fit(){
+    const cv=this.cv;
+    if(!cv)return false;
+    if(!this.ctx&&cv.getContext)this.ctx=cv.getContext("2d");
+    const css=Math.round(cv.clientWidth||0);
+    if(!this.ctx||css<4){this.size=0;return false}
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+    const side=Math.max(8,Math.round(css*dpr));
+    if(cv.width!==side||cv.height!==side){cv.width=side;cv.height=side}
+    this.size=css;this.dpr=dpr;
+    this.ctx.setTransform(dpr,0,0,dpr,0,0);
+    this.render(this.p);
+    if(this._queued){
+      const q=this._queued;this._queued=null;
+      this.play(q[0],q[1],q[2]);
+    }
+    return true;
+  }
+  recover(){this.ctx=null;this.fit()}        // contesto perso / backing store scartato
+
+  /* ---- nessuna eccezione esce mai verso rAF o IntersectionObserver ---- */
+  render(p){
+    try{this.paint(p);return true}
+    catch(err){
+      this.renderErrors++;
+      try{if(this.ctx)this.ctx.clearRect(0,0,this.size,this.size)}catch(ignore){}
+      return false;
+    }
+  }
+
+  paint(p){
+    const ctx=this.ctx,S=this.size;
+    if(!ctx||S<4)return;
+    const o=this.o;
+    p=clamp(p,0,1);this.p=p;
+    const closed=p>=1-1e-6;
+    const sweep=p*TAU;
+    const A=o.alpha;
+    const R=clamp(o.r*S,S*.14,S*.42);
+    const RMAX=S*.485;
+    const hair=Math.max(1,S*.0035);
+    const stem=Math.max(S*.026*o.thin,1.1);
+    ctx.clearRect(0,0,S,S);
+    ctx.save();
+    ctx.translate(S/2,S/2);
+    ctx.fillStyle=INK_RGB;ctx.strokeStyle=INK_RGB;
+    ctx.lineJoin="round";ctx.lineCap="round";
+
+    /* 1 — traccia fantasma: il logogramma c'è anche al 5 % */
+    if(!closed&&o.ghost>0){
+      ctx.globalAlpha=o.ghost*A;
+      ctx.lineWidth=Math.max(1,stem*.5);
+      ctx.beginPath();ctx.arc(0,0,rad(R),0,TAU);ctx.stroke();
+    }
+
+    /* 2 — nastro principale: due bordi indipendenti, spessori mai < 0 */
+    const RAMP=.45;
+    const N=Math.max(140,Math.min(420,Math.round(S*1.2)));
+    const hi=[],lo=[];
+    for(let i=0;i<=N;i++){
+      const th=sweep*i/N;
+      const mid=R+this.nR(th)*S*.052+this.nJ(th)*S*.013;
+      const taper=closed?1:Math.min(1,th/RAMP)*Math.min(1,Math.max(0,sweep-th)/RAMP);
+      const half=rad(Math.max(stem*(1+this.nT(th)*.8),S*.004)*taper/2);
+      hi.push([th,mid+half]);
+      lo.push([th,rad(mid-half)]);
+    }
+    for(const[w,a]of PASS3){
+      ctx.globalAlpha=a*A;
+      ctx.beginPath();
+      for(let i=0;i<hi.length;i++){const[th,r]=hi[i];const x=Math.cos(th)*r,y=Math.sin(th)*r;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}
+      for(let i=lo.length-1;i>=0;i--){const[th,r]=lo[i];ctx.lineTo(Math.cos(th)*r,Math.sin(th)*r)}
+      ctx.closePath();ctx.fill();
+    }
+
+    /* 3 — punta della penna: raggio calcolato prima del taper, quindi sempre > 0 */
+    if(!closed){
+      const head=Math.max(stem*(1+this.nT(sweep)*.8),S*.004)*.34;
+      const mid=R+this.nR(sweep)*S*.052+this.nJ(sweep)*S*.013;
+      for(const[w,a]of PASS3){
+        const r=rad(head*w*1.5);
+        if(r<.4)continue;
+        ctx.globalAlpha=a*A;
+        ctx.beginPath();ctx.arc(Math.cos(sweep)*mid,Math.sin(sweep)*mid,r,0,TAU);ctx.fill();
+      }
+    }
+
+    /* 4 — archi satellite */
+    const jit=S*.018;
+    for(const B of this.bands){
+      const bp=clamp((p-B.delay)/(1-B.delay),0,1);
+      if(bp<=0)continue;
+      const span=B.len*bp;
+      const n=Math.max(24,Math.ceil(span/.03));
+      const orbit=Math.max(2,Math.min(B.rf*R,RMAX*.9));
+      const stemA=Math.max(stem*B.thin,S*.0025);
+      for(const[w,a]of PASS3){
+        const out=[],inn=[];
+        for(let i=0;i<=n;i++){
+          const th=B.start+B.dir*span*i/n;
+          const mid=orbit+B.noise(th)*jit;
+          const half=rad(Math.max(stemA*(1+B.noise(th+2)*.5),S*.003)*w/2);
+          out.push([th,rad(mid+half)]);
+          inn.push([th,rad(mid-half)]);
+        }
+        ctx.globalAlpha=a*.8*A;
+        ctx.beginPath();
+        for(let i=0;i<out.length;i++){const[th,r]=out[i];const x=Math.cos(th)*r,y=Math.sin(th)*r;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}
+        for(let i=inn.length-1;i>=0;i--){const[th,r]=inn[i];ctx.lineTo(Math.cos(th)*r,Math.sin(th)*r)}
+        ctx.closePath();ctx.fill();
+        const cap=rad(stemA*w*.55);
+        if(cap>=.4){
+          for(const th of[B.start,B.start+B.dir*span]){
+            const mid=orbit+B.noise(th)*jit;
+            ctx.beginPath();ctx.arc(Math.cos(th)*mid,Math.sin(th)*mid,cap,0,TAU);ctx.fill();
+          }
+        }
+      }
+    }
+
+    /* 5 — schizzi */
+    for(const d of this.splats){
+      if(p<d.appear)continue;
+      const fade=closed?1:Math.min(1,(p-d.appear)/.12);
+      const rr=Math.max(1,Math.min(d.rOrbit*R,RMAX*.92));
+      const r=Math.max(.5,Math.min(d.rDot*S,S*.012));
+      ctx.globalAlpha=d.alpha*fade*A;
+      ctx.beginPath();ctx.arc(Math.cos(d.th)*rr,Math.sin(d.th)*rr,r,0,TAU);ctx.fill();
+    }
+
+    /* 6 — anellino satellite */
+    if(this.hasRing&&p>this.ringAt){
+      const sr=Math.max(1,Math.min(this.ringR*R,S*.05));
+      const sd=Math.min(this.ringOrbit*R,RMAX-sr-hair);
+      if(sd>0){
+        ctx.globalAlpha=.45*A;
+        ctx.lineWidth=Math.max(1,S*.004);
+        ctx.beginPath();ctx.arc(Math.cos(this.ringTh)*sd,Math.sin(this.ringTh)*sd,sr,0,TAU);ctx.stroke();
+      }
+    }
+
+    /* 7 — cerchio interno, whisper */
+    if(o.inner>0&&p>.05){
+      ctx.globalAlpha=o.inner*A*Math.min(1,p*1.6);
+      ctx.lineWidth=Math.max(1,S*.0035);
+      ctx.beginPath();ctx.arc(0,0,Math.max(1,R*.55),0,TAU);ctx.stroke();
+    }
+    ctx.restore();
+    ctx.globalAlpha=1;
+  }
+
+  /* ---- animazione: una sola catena per glifo, cancellabile, ripartibile ---- */
+  play(target,ms,wait){
+    const t=clamp(target||0,0,1);
+    const dur=(ms===undefined||ms===null)?1200:Math.max(0,ms);
+    const delay=Math.max(0,wait||0);
+    if(this.size<4&&!this.fit()){this._queued=[t,dur,delay];return false}   // niente larghezza: riprova dopo il resize
+    if(this._raf){cancelAnimationFrame(this._raf);this._raf=null}
+    this.played=true;
+    if(reduced||dur===0){this._queued=null;this.p=t;this.render(t);return true}
+    const from=this.p,t0=performance.now()+delay;
+    const step=now=>{
+      this._raf=null;
+      const k=clamp((now-t0)/dur,0,1);
+      const e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;
+      this.p=lerp(from,t,e);
+      this.render(this.p);
+      if(k<1)this._raf=requestAnimationFrame(step);
+    };
+    this._raf=requestAnimationFrame(step);
+    return true;
+  }
+  stop(){if(this._raf){cancelAnimationFrame(this._raf);this._raf=null}}
+  reseed(seed){
+    this.seed=Logogram.fixSeed(seed);
+    this.shape();this.p=0;
+    if(this.size>=4)this.render(0);
+  }
+}
+
+/* ---- registro + ResizeObserver ---- */
+const Logos={
+  list:[],
+  byCv:new Map(),
+  _ro:(typeof ResizeObserver!=="undefined")
+    ? new ResizeObserver(es=>{for(const en of es){const L=Logos.byCv.get(en.target);if(L)L.fit()}})
+    : null,
+  add(cv,seed,opts){
+    if(!cv)return null;
+    const L=new Logogram(cv,seed,opts);
+    Logos.list.push(L);Logos.byCv.set(cv,L);
+    if(Logos._ro)Logos._ro.observe(cv);
+    cv.addEventListener("contextrestored",()=>L.recover());
+    return L;
+  },
+  get(cv){return Logos.byCv.get(cv)||null},
+  fitAll(){for(const L of Logos.list)L.fit()},
+  refresh(){for(const L of Logos.list)if(L.played&&L.size>=4)L.recover()}
+};
+
+/* ---- ogni anello sa quando e quanto deve riempirsi ---- */
+function startFor(cv){
+  const L=Logos.get(cv);
+  if(!L)return true;                                   // nulla da sorvegliare
+  if(L.played&&L.p>=1)return true;
+  if(cv.id==="heroRing")return L.play(1,reduced?0:2600);
+  if(cv.id==="ringBefore")return L.play(.62,1500);
+  if(cv.id==="ringAfter")return L.play(1,1600,350);
+  if(cv.classList.contains("rglyph")){
+    const pct=parseFloat(cv.dataset.pct);
+    return L.play(Number.isFinite(pct)?clamp(pct,.12,1):.3,1500);
+  }
+  if(cv.classList.contains("pglyph")){
+    const idx=parseInt(cv.dataset.idx||"0",10)||0;
+    return L.play(1,1300,300*idx);
+  }
+  return L.play(1,1100);
+}
+
+/* ============================================================
+   NAV + HERO
+============================================================ */
+const nav=document.getElementById("nav");
+addEventListener("scroll",()=>nav.classList.toggle("scrolled",scrollY>40),{passive:true});
+
+const navG=Logos.add(document.getElementById("navGlyph"),hashSeed("exobioma"),
+  {bands:1,splat:2,sat:.25,thin:1.25,r:.42,ghost:0});
+if(navG)navG.play(1,0);
+
+const heroG=Logos.add(document.getElementById("heroRing"),Logogram.fixSeed(Math.random()*1e9),
+  {bands:2,splat:9,sat:.8,inner:.12,r:.36});
+
+const stage=document.getElementById("ringStage");
+function reseed(){
+  if(!heroG)return;
+  heroG.reseed(Math.random()*1e9);
+  heroG.play(1,reduced?0:2200);
+}
+if(stage){
+  stage.addEventListener("click",reseed);
+  stage.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();reseed()}});
+}
+stage.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();reseed()}});
+
+/* parallasse leggera del logogramma — lavora solo mentre l'hero è in vista */
+if(!reduced){
+  const hero=document.getElementById("top"),px=document.getElementById("ringPx");
+  if(hero&&px){
+    let tx=0,ty=0,cx=0,cy=0,live=true;
+    hero.addEventListener("pointermove",e=>{
+      const r=hero.getBoundingClientRect();
+      tx=((e.clientX-r.left)/Math.max(1,r.width)-.5)*14;
+      ty=((e.clientY-r.top)/Math.max(1,r.height)-.5)*14;
+    });
+    hero.addEventListener("pointerleave",()=>{tx=0;ty=0});
+    if("IntersectionObserver" in window){
+      new IntersectionObserver(es=>{live=es.some(en=>en.isIntersecting)},{threshold:0}).observe(hero);
+    }
+    (function pl(){
+      if(live&&(Math.abs(tx-cx)>.01||Math.abs(ty-cy)>.01)){
+        cx+=(tx-cx)*.06;cy+=(ty-cy)*.06;
+        px.style.transform="translate("+cx.toFixed(2)+"px,"+cy.toFixed(2)+"px)";
+      }
+      requestAnimationFrame(pl)
+    })();
+  }
+}
+
+/* glifi di sezione, anelli prima/dopo, roadmap e percorso */
+document.querySelectorAll(".glyph[data-seed]").forEach(cv=>{
+  Logos.add(cv,hashSeed(cv.dataset.seed),{bands:1,splat:3,sat:.3});
+});
+Logos.add(document.getElementById("ringBefore"),hashSeed("statico"),
+  {alpha:.55,bands:1,splat:4,sat:.4,r:.34,ghost:.2});
+Logos.add(document.getElementById("ringAfter"),hashSeed("dinamico"),
+  {bands:1,splat:6,sat:.6,r:.34,ghost:.2});
+document.querySelectorAll(".rglyph").forEach(cv=>{
+  Logos.add(cv,hashSeed(cv.dataset.seed),{bands:1,splat:4,sat:.3,r:.34,ghost:.22});
+});
+document.querySelectorAll(".pglyph").forEach(cv=>{
+  Logos.add(cv,hashSeed(cv.dataset.seed),{bands:1,splat:5,sat:.35,r:.34});
+});
+
+/* ============================================================
+   REVEAL + SCROLLSPY + TRIGGER DEI GLIFI
+============================================================ */
+const io=new IntersectionObserver(es=>{
+  es.forEach(en=>{
+    if(!en.isIntersecting)return;
+    en.target.classList.add("in");io.unobserve(en.target);
+  });
+},{threshold:.12});
+document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+
+/* l'animazione di ogni anello parte quando entra nel viewport.
+   Se il glifo non può ancora partire (canvas largo 0) l'osservazione NON
+   viene consumata: il trigger riprova al prossimo cambiamento di layout. */
+const glyphIO=new IntersectionObserver(es=>{
+  for(const en of es){
+    if(!en.isIntersecting)continue;
+    if(startFor(en.target))glyphIO.unobserve(en.target);
+  }
+},{threshold:[0,.3],rootMargin:"0px 0px -8% 0px"});
+document.querySelectorAll(".glyph[data-seed],.rglyph,.pglyph,#ringBefore,#ringAfter,#heroRing")
+  .forEach(cv=>glyphIO.observe(cv));
+
+/* reti di sicurezza: un anello in vista che non è mai partito riparte;
+   i glifi già disegnati si ridisegnano se il browser ha scartato il canvas */
+function sweepGlyphs(){
+  const vh=window.innerHeight||800;
+  for(const L of Logos.list){
+    if(!L.cv||L.played)continue;
+    const r=L.cv.getBoundingClientRect();
+    if(r.width<4||r.bottom<=0||r.top>=vh)continue;
+    if(!L.fit())continue;
+    startFor(L.cv);
+  }
+}
+[120,600,1800,4000].forEach(ms=>setTimeout(sweepGlyphs,ms));
+addEventListener("pageshow",sweepGlyphs);
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden)return;
+  Logos.refresh();
+  sweepGlyphs();
+});
+(function watchDPR(){
+  if(typeof window.matchMedia!=="function")return;
+  const mq=window.matchMedia("(resolution: "+(window.devicePixelRatio||1)+"dppx)");
+  if(!mq||typeof mq.addEventListener!=="function")return;
+  mq.addEventListener("change",()=>{Logos.fitAll();watchDPR()},{once:true});
+})();
+
+const spyLinks=document.querySelectorAll("[data-spy]");
+const spyIO=new IntersectionObserver(es=>{
+  es.forEach(en=>{
+    if(en.isIntersecting){
+      spyLinks.forEach(a=>a.classList.toggle("active",a.getAttribute("href")==="#"+en.target.id));
+    }
+  });
+},{rootMargin:"-35% 0px -55% 0px"});
+["paradigma","estremofili","regimi","modello","percorso","roadmap"].forEach(id=>{
+  const el=document.getElementById(id);if(el)spyIO.observe(el);
+});
+
+/* ============================================================
+   FIG. 2 — LA COLONNA ATMOSFERICA (con LCZ)
+============================================================ */
+const rc=document.getElementById("regimeCanvas"),rctx=rc.getContext("2d");
+const LOGMAX=Math.log10(2000);
+let RW=0,RH=0;
+const RM={l:74,r:118,t:24,b:40};
+let cx0=0,cw=0,ct=0,ch=0;
+let P=1,drag=false,regActive=false,glided=false,curZone="A";
+const parts=[];
+
+function sizeReg(){
+  const dpr=Math.min(devicePixelRatio||1,2);
+  RW=rc.clientWidth;RH=rc.clientHeight;
+  rc.width=RW*dpr;rc.height=RH*dpr;
+  rctx.setTransform(dpr,0,0,dpr,0,0);
+  cx0=RM.l;cw=RW-RM.l-RM.r;ct=RM.t;ch=RH-RM.t-RM.b;
+}
+const yOfP=p=>ct+Math.log10(clamp(p,1,2000))/LOGMAX*ch;
+const pOfY=y=>Math.pow(10,clamp((y-ct)/ch,0,1)*LOGMAX);
+
+for(let i=0;i<16;i++){
+  parts.push({xF:Math.random(),P:Math.pow(10,Math.random()*Math.log10(1080)),
+    r:1.2+Math.random()*1.8,ph:Math.random()*TAU,a:.5});
+}
+
+const ZONES=[
+ {id:"A",from:1,to:100,name:"Aerodinamico",range:"P < 100 atm",
+  desc:"Il mezzo si comporta in buona approssimazione come un gas: la differenza di densità è massima e la caduta gravitazionale domina (legge di Stokes). La vita esisterebbe in sospensione attiva o in cicli vitali rapidi, per analogia con l'aeroplancton terrestre."},
+ {id:"B",from:100,to:500,name:"Transizione supercritica",range:"100 – 500 atm",
+  desc:"A queste pressioni fluidi come CO₂ e N₂ possono comportarsi da fluidi supercritici: viscosità simile a un gas, densità simile a un liquido, con soglie che dipendono da temperatura e composizione. Si ipotizza che le correnti convettive possano sostenere particelle microscopiche con costo energetico ridotto."},
+ {id:"C",from:500,to:1380,name:"Oceanico",range:"500 – 1380 atm",
+  desc:"Ipotesi: quando ρ_atm si avvicina a ρ_bio la sedimentazione si riduce fortemente, e l'atmosfera diventa un mezzo in cui le cellule restano in sospensione."},
+ {id:"F",from:1380,to:2000,name:"Oltre il limite",range:"P > ~1380 atm · 140 MPa",warn:true,
+  desc:"Il limite piezofilo, attribuito a Thermococcus piezophilus: dissociazione delle subunità proteiche e rigidificazione delle membrane. Il limite superiore del dominio considerato."}
+];
+const zoneOf=p=>ZONES.find(z=>p>=z.from&&p<z.to)||ZONES[3];
+
+const regInfo=document.getElementById("regInfo");
+const elLetter=document.getElementById("regLetter"),elName=document.getElementById("regName"),
+      elRange=document.getElementById("regRange"),elDesc=document.getElementById("regDesc"),
+      roP=document.getElementById("roP"),roRho=document.getElementById("roRho"),
+      roVs=document.getElementById("roVs"),roLcz=document.getElementById("roLcz");
+const fmtI=n=>Math.round(n).toLocaleString("it-IT");
+
+function setZone(z){
+  if(z.id===curZone)return;
+  curZone=z.id;
+  elLetter.textContent=z.id==="F"?"—":z.id;
+  elName.textContent=z.name;elRange.textContent=z.range;elDesc.textContent=z.desc;
+  regInfo.classList.toggle("warn",!!z.warn);
+  [elLetter,elName,elRange,elDesc].forEach(el=>{
+    el.classList.remove("swap");void el.offsetWidth;el.classList.add("swap");
+  });
+}
+function updateReadout(){
+  const rho=1.2*P,z=zoneOf(P);
+  roP.textContent="≈ "+fmtI(P)+" atm";
+  roRho.textContent=(rho<10?rho.toLocaleString("it-IT",{maximumFractionDigits:1}):fmtI(rho))+" kg/m³";
+  if(z.warn){roVs.textContent="n/d";roVs.className="warn"}
+  else{
+    const vs=clamp((1000-rho)/1000,0,1);
+    if(Math.abs(P-833)<28){roVs.textContent="≈ 0 · neutro";roVs.className="acc"}
+    else{roVs.textContent=vs.toLocaleString("it-IT",{maximumFractionDigits:2})+" v₀";roVs.className=""}
+  }
+  /* LCZ: massa di colonna compatibile, in unità terrestri (≈1 atm) */
+  roLcz.textContent="× "+fmtI(Math.min(P,1380))+(P>1380?" · cap":"");
+  roLcz.className=P>1380?"warn":"";
+  setZone(z);
+  rc.setAttribute("aria-valuenow",Math.round(P));
+  rc.setAttribute("aria-valuetext","pressione "+fmtI(P)+" atmosfere, regime "+z.name);
+}
+
+let regT=0;
+function drawReg(){
+  rctx.clearRect(0,0,RW,RH);
+  rctx.font='10px "IBM Plex Mono",monospace';
+  /* — colonna: densità d'inchiostro crescente — */
+  const g=rctx.createLinearGradient(0,ct,0,ct+ch);
+  for(let i=0;i<=10;i++){
+    const t=i/10;
+    g.addColorStop(t,"rgba("+INK+","+(.02+.13*Math.pow(t,1.35)).toFixed(3)+")");
+  }
+  rctx.fillStyle=g;rctx.fillRect(cx0,ct,cw,ch);
+  rctx.strokeStyle=HAIR;rctx.lineWidth=1;
+  rctx.strokeRect(cx0+.5,ct+.5,cw-1,ch-1);
+
+  /* — lettere dei regimi — */
+  rctx.font='40px "Cormorant Garamond",serif';
+  rctx.fillStyle="rgba("+INK+",.15)";rctx.textAlign="left";
+  [["A",1,100],["B",100,500],["C",500,1380]].forEach(([n,a,b])=>{
+    const y=(yOfP(a)+yOfP(b))/2;rctx.fillText(n,cx0+20,y+14);
+  });
+
+  /* — confini — */
+  rctx.setLineDash([2,4]);rctx.strokeStyle="#B9AD95";
+  [100,500].forEach(b=>{const y=yOfP(b);
+    rctx.beginPath();rctx.moveTo(cx0,y);rctx.lineTo(cx0+cw,y);rctx.stroke();
+    rctx.fillStyle=MUT;rctx.textAlign="right";rctx.fillText(b+" atm",cx0-8,y+3);
+  });
+  rctx.setLineDash([]);
+
+  /* — linea di galleggiamento neutro — */
+  const yn=yOfP(833);
+  rctx.strokeStyle="rgba(23,94,125,.75)";rctx.setLineDash([2,4]);
+  rctx.beginPath();rctx.moveTo(cx0,yn);rctx.lineTo(cx0+cw,yn);rctx.stroke();rctx.setLineDash([]);
+  rctx.fillStyle=ACC;rctx.textAlign="right";
+  rctx.fillText("galleggiamento",cx0-8,yn-6);
+  rctx.fillText("neutro (caso illustrativo)",cx0-8,yn+16);
+
+  /* — fondo biologico — */
+  const yf=yOfP(1380);
+  rctx.strokeStyle="rgba(164,78,46,.8)";rctx.setLineDash([5,4]);
+  rctx.beginPath();rctx.moveTo(cx0,yf);rctx.lineTo(cx0+cw,yf);rctx.stroke();rctx.setLineDash([]);
+  rctx.fillStyle=WARN;rctx.textAlign="right";
+  rctx.fillText("≈1380 atm",cx0-8,yf+3);
+  rctx.textAlign="center";
+  rctx.fillText("140 MPa — Thermococcus piezophilus",cx0+cw/2,yf+(ct+ch-yf)/2+3);
+
+  /* — parentesi LCZ a destra — */
+  const bx=cx0+cw+54;
+  rctx.strokeStyle="rgba(23,94,125,.6)";rctx.lineWidth=1;
+  rctx.beginPath();
+  rctx.moveTo(bx,ct);rctx.lineTo(bx,yf);
+  rctx.moveTo(bx-5,ct);rctx.lineTo(bx+5,ct);
+  rctx.moveTo(bx-5,yf);rctx.lineTo(bx+5,yf);
+  rctx.stroke();
+  rctx.save();
+  rctx.translate(bx+11,(ct+yf)/2);
+  rctx.rotate(-Math.PI/2);
+  rctx.fillStyle=ACC;rctx.textAlign="center";
+  rctx.font='9px "IBM Plex Mono",monospace';
+  rctx.fillText("LCZ — COLONNA COMPATIBILE",0,3);
+  rctx.restore();
+
+  /* — particelle in sedimentazione — */
+  rctx.fillStyle="rgb("+INK+")";
+  for(const p of parts){
+    rctx.globalAlpha=p.a;
+    const x=cx0+clamp(p.xF+Math.sin(regT*.3+p.ph)*.012,.015,.985)*cw;
+    rctx.beginPath();rctx.arc(x,yOfP(p.P),p.r,0,TAU);rctx.fill();
+  }
+  rctx.globalAlpha=1;
+
+  /* — marcatore + microrganismo — */
+  const ym=yOfP(P),z=zoneOf(P);
+  const vs=clamp((1000-1.2*P)/1000,0,1);
+  const swim=Math.sin(regT*.55)*(z.id==="C"?9:2.5);
+  const wob=Math.sin(regT*2.1)*1.4*(.4+vs);
+  const mx=cx0+cw*.5+swim,my=ym+wob;
+  rctx.strokeStyle="rgba("+INK+",.8)";rctx.lineWidth=1;
+  rctx.beginPath();rctx.moveTo(cx0,ym);rctx.lineTo(cx0+cw,ym);rctx.stroke();
+  rctx.lineWidth=1.4;
+  rctx.beginPath();rctx.arc(mx,my,5,0,TAU);rctx.stroke();
+  rctx.beginPath();rctx.arc(mx,my,1.6,0,TAU);
+  rctx.fillStyle="rgb("+INK+")";rctx.fill();
+
+  /* — etichetta della pressione corrente, dentro il grafico — */
+  const lbl=fmtI(P)+" atm";
+  rctx.font='11px "IBM Plex Mono",monospace';
+  const tw=rctx.measureText(lbl).width;
+  const ly=clamp(ym-24,ct+8,ct+ch-22);
+  rctx.fillStyle="#F6F0E2";
+  rctx.fillRect(cx0+cw-14-tw,ly,tw+12,16);
+  rctx.strokeStyle=HAIR;
+  rctx.strokeRect(cx0+cw-14-tw+.5,ly+.5,tw+11,15);
+  rctx.fillStyle="rgb("+INK+")";rctx.textAlign="left";
+  rctx.fillText(lbl,cx0+cw-8-tw,ly+12);
+
+  /* — estremi dell'asse — */
+  rctx.fillStyle=MUT;rctx.font='9.5px "IBM Plex Mono",monospace';
+  rctx.textAlign="left";
+  rctx.fillText("1 atm",cx0+6,ct+16);
+  rctx.textAlign="center";
+  rctx.fillText("PRESSIONE · SCALA LOG",cx0+cw/2,RH-12);
+  rctx.textAlign="right";
+  rctx.fillText("2000",cx0-8,ct+ch);
+}
+
+function updateParts(dt){
+  for(const p of parts){
+    const y=yOfP(p.P),rho=1.2*p.P,vs=clamp((1000-rho)/1000,0,1);
+    let vy=90*Math.pow(vs,1.35)+(rho>1000?-14:3)+Math.sin(regT*.7+p.ph)*4;
+    const Pn=pOfY(y+vy*dt);
+    p.P=Pn;
+    if(p.P>1080){p.a-=dt*.5;if(p.a<=0){p.a=0;p.P=Math.pow(10,Math.random()*Math.log10(900));p.xF=Math.random()}}
+    else if(p.a<.5)p.a=Math.min(.5,p.a+dt*.4);
+  }
+}
+
+function setFromEvent(e){
+  const r=rc.getBoundingClientRect();
+  P=clamp(pOfY(e.clientY-r.top),1.5,1950);
+  updateReadout();drawReg();
+}
+rc.addEventListener("pointerdown",e=>{drag=true;rc.setPointerCapture(e.pointerId);setFromEvent(e)});
+rc.addEventListener("pointermove",e=>{if(drag)setFromEvent(e)});
+["pointerup","pointercancel"].forEach(ev=>rc.addEventListener(ev,()=>drag=false));
+rc.addEventListener("keydown",e=>{
+  if(e.key==="ArrowUp"){P=clamp(P/1.15,1.5,1950);updateReadout();drawReg();e.preventDefault()}
+  if(e.key==="ArrowDown"){P=clamp(P*1.15,1.5,1950);updateReadout();drawReg();e.preventDefault()}
+});
+
+function glideRegime(){
+  if(glided)return;glided=true;
+  if(reduced){P=640;updateReadout();drawReg();return}
+  const from=1,t0=performance.now();
+  (function st(n){
+    const k=clamp((n-t0)/2600,0,1);
+    const e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;
+    P=from+(640-from)*e;updateReadout();drawReg();
+    if(k<1)requestAnimationFrame(st);
+  })(t0);
+}
+const regVis=new IntersectionObserver(es=>{
+  es.forEach(en=>{
+    regActive=en.isIntersecting;
+    if(regActive)glideRegime();
+  });
+},{threshold:.25});
+const regInit=new IntersectionObserver(es=>{
+  es.forEach(en=>{if(en.isIntersecting){sizeReg();updateReadout();drawReg();regVis.observe(rc);regInit.disconnect()}});
+},{threshold:.05});
+regInit.observe(rc);
+
+/* ============================================================
+   FIG. 3 — SPETTRI STELLARI E PROTOTIPI MFT
+============================================================ */
+const sc=document.getElementById("specCanvas"),sctx=sc.getContext("2d");
+let SW=0,SH=0,hoverL=null;
+const LMIN=350,LMAX=1100;
+const SM={l:44,r:16,t:30,b:34};
+const planck=(l,T)=>1/(Math.pow(l/1000,5)*(Math.exp(1.4388e7/(l*T))-1));
+function normFn(T){
+  let max=0;
+  for(let i=0;i<=240;i++){const v=planck(LMIN+(LMAX-LMIN)*i/240,T);if(v>max)max=v}
+  return l=>planck(l,T)/max;
+}
+const nG=normFn(5778),nM=normFn(2600);
+const PROTOS={
+ alpha:{g:"Α",nome:"Alpha — Earth-Like",org:"Synechocystis sp.",T:"5 – 40 °C",
+  pig:"Clorofilla a",pk:"680 nm",str:"Fotosintesi ossigenica",
+  note:"Prototipo di riferimento: fotosintesi ossigenica, la strategia meglio caratterizzata. È un riferimento descrittivo e non un modello ideale: gli altri prototipi sono definiti per differenza funzionale.",
+  bands:[[680,48]]},
+ beta:{g:"Β",nome:"Beta — Hot / Volcanic",org:"Mastigocladus sp.",T:"40 – 75 °C",
+  pig:"Chl a + ficobiliproteine",pk:"≈ 620 nm",str:"Termofilia · tolleranza allo zolfo",
+  note:"Descritto in sorgenti calde terrestri: rappresenta ambienti vulcanici o geotermici, dove la temperatura esclude la maggior parte degli altri organismi.",
+  bands:[[620,64]]},
+ gamma:{g:"Γ",nome:"Gamma — M-Dwarf Specialist",org:"Acaryochloris · Blastochloris",T:"da definire",
+  pig:"Chl d/f · BChl b",pk:"710 – 750 · ≈ 1020 nm",str:"Fotosintesi nel vicino infrarosso",
+  note:"Descrive la fotosintesi nel vicino infrarosso, che potrebbe essere vantaggiosa attorno a stelle di tipo M, dove lo spettro è spostato verso lunghezze d'onda maggiori. Per questi mondi in letteratura sono state proposte superfici non verdi (ipotesi: Kiang et al., 2007; Hegde e Kaltenegger, 2013).",
+  bands:[[725,62],[1015,74]]},
+ delta:{g:"Δ",nome:"Delta — Cryo / Ice",org:"Chlamydomonas nivalis",T:"≈ 0 °C",
+  pig:"Astaxantina (schermo) + Chl a",pk:"400 – 500 nm (schermante)",str:"Criofilia · schermatura UV",
+  note:"Vive dove il ghiaccio filtra la luce: l'astaxantina agisce da schermo contro l'eccesso di luce e UV, più che da antenna per la raccolta di fotoni.",
+  bands:[[455,96]]}
+};
+let curP="alpha";
+
+function sizeSpec(){
+  const dpr=Math.min(devicePixelRatio||1,2);
+  SW=sc.clientWidth;SH=sc.clientHeight;
+  sc.width=SW*dpr;sc.height=SH*dpr;
+  sctx.setTransform(dpr,0,0,dpr,0,0);
+}
+const xOfL=l=>SM.l+(l-LMIN)/(LMAX-LMIN)*(SW-SM.l-SM.r);
+const lOfX=x=>LMIN+(x-SM.l)/(SW-SM.l-SM.r)*(LMAX-LMIN);
+
+function drawSpec(){
+  sctx.clearRect(0,0,SW,SH);
+  const plotH=SH-SM.t-SM.b,base=SH-SM.b;
+  const yOf=v=>SM.t+(1-v)*(plotH-8)+2;
+  sctx.font='10px "IBM Plex Mono",monospace';
+
+  sctx.strokeStyle=HAIR;sctx.lineWidth=1;
+  sctx.beginPath();sctx.moveTo(SM.l,SM.t-8);sctx.lineTo(SM.l,base);
+  sctx.lineTo(SW-SM.r,base);sctx.stroke();
+  sctx.fillStyle=MUT;sctx.textAlign="center";
+  [400,600,800,1000].forEach(v=>{
+    const x=xOfL(v);
+    sctx.beginPath();sctx.moveTo(x,base);sctx.lineTo(x,base+4);sctx.stroke();
+    sctx.fillText(v,x,base+16);
+  });
+  sctx.textAlign="left";sctx.fillText("nm",SW-SM.r-16,base+16);
+
+  const pr=PROTOS[curP];
+  for(const[l,w]of pr.bands){
+    const x0=xOfL(l-w/2),x1=xOfL(l+w/2);
+    const g=sctx.createLinearGradient(x0,0,x1,0);
+    g.addColorStop(0,"rgba("+INK+",0)");
+    g.addColorStop(.5,"rgba("+INK+",.22)");
+    g.addColorStop(1,"rgba("+INK+",0)");
+    sctx.fillStyle=g;sctx.fillRect(x0,SM.t,x1-x0,plotH);
+    const xm=xOfL(l);
+    sctx.strokeStyle="rgb("+INK+")";sctx.lineWidth=1.3;
+    sctx.beginPath();sctx.arc(xm,14,4,0,TAU);sctx.stroke();
+    sctx.fillStyle=MUT;sctx.textAlign="left";sctx.fillText(l,xm+8,17);
+  }
+
+  const curve=(fn,color)=>{
+    sctx.strokeStyle=color;sctx.lineWidth=1.5;sctx.beginPath();
+    for(let x=SM.l;x<=SW-SM.r;x+=2){
+      const v=fn(lOfX(x)),y=yOf(v);
+      x===SM.l?sctx.moveTo(x,y):sctx.lineTo(x,y);
+    }
+    sctx.stroke();
+  };
+  curve(nG,"#8B7A5C");curve(nM,ACC);
+  sctx.font='10px "IBM Plex Mono",monospace';
+  sctx.fillStyle="#8B7A5C";sctx.textAlign="left";
+  sctx.fillText("G2V",xOfL(522)+6,yOf(nG(522))-6);
+  sctx.fillStyle=ACC;sctx.textAlign="right";
+  sctx.fillText("nana M",xOfL(1005),yOf(nM(1005))-8);
+
+  if(hoverL!==null){
+    const x=xOfL(hoverL);
+    sctx.strokeStyle="rgba("+INK+",.35)";sctx.setLineDash([2,4]);
+    sctx.beginPath();sctx.moveTo(x,SM.t-8);sctx.lineTo(x,base);sctx.stroke();
+    sctx.setLineDash([]);
+    const dom=nG(hoverL)>nM(hoverL)?"stella G":"nana M";
+    sctx.fillStyle="rgb("+INK+")";sctx.textAlign="left";
+    sctx.fillText("λ = "+Math.round(hoverL)+" nm · massimo fotonico: "+dom,SM.l+10,SM.t+2);
+  }
+}
+
+function setProto(key){
+  curP=key;
+  const pr=PROTOS[key];
+  document.querySelectorAll(".ptabs button").forEach(b=>{
+    const on=b.dataset.p===key;
+    b.classList.toggle("active",on);b.setAttribute("aria-selected",on);
+  });
+  const box=document.getElementById("protoInfo");
+  document.getElementById("pG").textContent=pr.g;
+  document.getElementById("pName").textContent=pr.nome;
+  document.getElementById("pOrg").textContent=pr.org;
+  document.getElementById("pT").textContent=pr.T;
+  document.getElementById("pPig").textContent=pr.pig;
+  document.getElementById("pPk").textContent=pr.pk;
+  document.getElementById("pStr").textContent=pr.str;
+  document.getElementById("pNote").textContent=pr.note;
+  box.classList.remove("swap");void box.offsetWidth;box.classList.add("swap");
+  drawSpec();
+}
+document.querySelectorAll(".ptabs button").forEach(b=>
+  b.addEventListener("click",()=>setProto(b.dataset.p)));
+
+sc.addEventListener("pointermove",e=>{
+  const r=sc.getBoundingClientRect();
+  const x=e.clientX-r.left;
+  if(x>SM.l&&x<SW-SM.r){hoverL=lOfX(x);drawSpec()}
+});
+sc.addEventListener("pointerleave",()=>{hoverL=null;drawSpec()});
+
+/* ============================================================
+   MATEMATICA — KaTeX con fallback
+============================================================ */
+function renderMath(){
+  const hasKatex=typeof katex!=="undefined";
+  document.querySelectorAll("[data-tex]").forEach(el=>{
+    if(hasKatex){
+      try{
+        katex.render(el.dataset.tex,el,{
+          throwOnError:false,strict:"ignore",trust:true,
+          displayMode:el.hasAttribute("data-display")
+        });
+        return;
+      }catch(e){/* ricade sul testo semplice */}
+    }
+    el.textContent=el.dataset.fb||"";
+  });
+  const allKeys=["tB","tMu","tY","tPhi","tF"];
+  const setLit=k=>{
+    allKeys.forEach(key=>{
+      document.querySelectorAll(".eqbox ."+key).forEach(s=>
+        s.classList.toggle("lit",key===k));
+    });
+  };
+  document.querySelectorAll(".term-row").forEach(row=>{
+    const k=row.dataset.k;
+    const on=()=>setLit(k),off=()=>setLit(null);
+    row.addEventListener("mouseenter",on);row.addEventListener("mouseleave",off);
+    row.addEventListener("focus",on);row.addEventListener("blur",off);
+    document.querySelectorAll(".eqbox ."+k).forEach(sp=>{
+      sp.addEventListener("mouseenter",on);sp.addEventListener("mouseleave",off);
+    });
+  });
+}
+
+/* ============================================================
+   TOAST + FORM
+============================================================ */
+const toast=document.getElementById("toast");let toastTimer;
+function showToast(t,m){
+  document.getElementById("toastTitle").textContent=t;
+  document.getElementById("toastMsg").textContent=m;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>toast.classList.remove("show"),5200);
+}
+const form=document.getElementById("contactForm");
+form.addEventListener("submit",e=>{
+  e.preventDefault();
+  const nome=document.getElementById("f-nome").value.trim();
+  const email=document.getElementById("f-email").value.trim();
+  let ok=true;
+  const flag=(name,bad)=>{form.querySelector('[data-f="'+name+'"]').classList.toggle("invalid",bad);ok=ok&&!bad};
+  flag("nome",nome.length<2);
+  flag("email",!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email));
+  if(!ok){showToast("VERIFICA I CAMPI","Nome e email sono obbligatori per risponderti.");return}
+  const msg=document.getElementById("f-msg").value.trim();
+  const subject=encodeURIComponent("[Exobioma] Contatto da "+nome);
+  const body=encodeURIComponent(msg+"\n\n— "+nome+"\n"+email);
+  showToast("CLIENT DI POSTA APERTO","Il messaggio è pronto: invialo a info@exobioma.org.");
+  window.location.href="mailto:info@exobioma.org?subject="+subject+"&body="+body;
+  form.reset();
+});
+form.querySelectorAll("input,textarea").forEach(el=>{
+  el.addEventListener("input",()=>{
+    const f=el.closest(".f-field");if(f)f.classList.remove("invalid");
+  });
+});
+
+/* ============================================================
+   INIT + RESIZE
+============================================================ */
+function initAll(){
+  sizeReg();sizeSpec();
+  Logos.fitAll();
+  drawSpec();
+  if(!glided){updateReadout();drawReg()}
+}
+initAll();
+setProto("alpha");
+renderMath();
+
+let rzT;
+addEventListener("resize",()=>{
+  clearTimeout(rzT);
+  rzT=setTimeout(initAll,140);
+});
+if(document.fonts&&document.fonts.ready){
+  document.fonts.ready.then(()=>{initAll()});
+}
+
+/* ciclo della colonna atmosferica (solo quando in vista) */
+let last=performance.now();
+(function loop(now){
+  const dt=clamp((now-last)/1000,0,.05);last=now;
+  if(regActive&&!reduced){regT+=dt;updateParts(dt);drawReg()}
+  requestAnimationFrame(loop);
+})(last);
+if(reduced){sizeReg();updateReadout();drawReg()}
+})();
+</script>
+</body>
+</html>
