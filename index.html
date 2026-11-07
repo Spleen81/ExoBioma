@@ -241,7 +241,7 @@
   .stokes{margin:18px 0 4px;color:var(--ink)}
   .stokes .katex{font-size:1.05em}
 
-  /* ---- §04 prototipi ---- */
+  /* ---- §05–06 prototipi ---- */
   .ptabs{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--hair);margin-bottom:clamp(28px,4vw,44px)}
   .ptabs button{
     font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
@@ -266,7 +266,29 @@
   .spec-legend span{display:inline-flex;align-items:center;gap:8px}
   .sw{display:inline-block;width:22px;height:0;border-top:2px solid}
 
-  /* ---- §05 modello ---- */
+  /* ---- §05–06 sottosezioni, esempio, zona cieca ---- */
+  .subhead{
+    display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;
+    margin:clamp(52px,7vw,80px) 0 22px;padding-bottom:12px;border-bottom:1px solid var(--hair);
+  }
+  .subhead .sub-k{
+    font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--acc);
+    text-transform:uppercase;flex:none;
+  }
+  .subhead h3{
+    font-family:var(--serif);font-weight:500;font-size:clamp(1.35rem,2.4vw,1.8rem);
+    line-height:1.2;letter-spacing:-.01em;
+  }
+  .worked{margin-top:clamp(36px,5vw,52px)}
+  .worked .note-body{margin-bottom:18px}
+  .worked .worked-eq{margin-bottom:0}
+  .blind{
+    margin-top:clamp(24px,4vw,38px);padding:clamp(22px,3vw,34px);
+    border:1px solid var(--warn);background:rgba(164,78,46,.045);
+  }
+  .blind .eqbox{margin-top:20px;margin-bottom:0;background:transparent;border-color:rgba(164,78,46,.35)}
+
+  /* ---- §07 modello ---- */
   .model-grid{display:grid;grid-template-columns:5fr 7fr;gap:clamp(28px,4.5vw,64px);align-items:start}
   @media(max-width:920px){.model-grid{grid-template-columns:1fr}}
   .terms{border-top:1px solid var(--hair);margin-top:30px}
@@ -293,7 +315,7 @@
   .ilam{margin-top:26px;font-size:.95rem;color:#4A4234;font-weight:300;max-width:52ch}
   .ilam .katex{font-size:1em;color:var(--ink)}
 
-  /* ---- §06 percorso ---- */
+  /* ---- §08 percorso ---- */
   .pipe{margin-top:clamp(40px,6vw,64px)}
   .pipe-row{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(18px,2.5vw,36px)}
   .pipe-row::before{content:"";position:absolute;top:48px;left:12.5%;right:12.5%;border-top:1px dashed #BFB39A}
@@ -317,7 +339,7 @@
   }
   @media(max-width:520px){.pipe-row{grid-template-columns:1fr}}
 
-  /* ---- §07 roadmap ---- */
+  /* ---- §09 roadmap ---- */
   .phase{display:grid;grid-template-columns:110px 1fr;gap:clamp(18px,3vw,40px);padding:38px 0;border-bottom:1px solid var(--hair)}
   .phase:first-of-type{border-top:1px solid var(--hair)}
   .rglyph{width:96px;height:96px;display:block}
@@ -337,7 +359,7 @@
   .mile li::before{content:"—";color:var(--acc);margin-right:10px}
   @media(max-width:680px){.phase{grid-template-columns:1fr}.rglyph{width:72px;height:72px}}
 
-  /* ---- §08 contatti ---- */
+  /* ---- §10 contatti ---- */
   .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,5vw,80px);align-items:start}
   @media(max-width:860px){.contact-grid{grid-template-columns:1fr}}
   .citation{
@@ -417,6 +439,7 @@
       <li><a href="#database" data-spy>Database</a></li>
       <li><a href="#paradigma" data-spy>Paradigma</a></li>
       <li><a href="#estremofili" data-spy>Estremofili</a></li>
+      <li><a href="#previsione" data-spy>Previsione</a></li>
       <li><a href="#modello" data-spy>Modello</a></li>
       <li><a href="#percorso" data-spy>Percorso</a></li>
       <li><a href="#roadmap" data-spy>Stato</a></li>
@@ -666,7 +689,7 @@
       <div class="pillar">
         <span class="pillar-no">02</span>
         <h3 class="pillar-t">Tassonomia fluidodinamica</h3>
-        <p class="pillar-d">Ipotesi di lavoro: ad alta pressione la densità di un'atmosfera può avvicinarsi a quella della materia vivente, riducendo la sedimentazione. In questo regime le cellule potrebbero restare in sospensione con un costo energetico ridotto (regime di galleggiamento neutro). Le soglie dipendono da composizione e temperatura e sono illustrate in §05.</p>
+        <p class="pillar-d">Ipotesi di lavoro: ad alta pressione la densità di un'atmosfera può avvicinarsi a quella della materia vivente, riducendo la sedimentazione. In questo regime le cellule potrebbero restare in sospensione con un costo energetico ridotto (regime di galleggiamento neutro). Le soglie dipendono da composizione e temperatura e sono illustrate in §05–06.</p>
       </div>
       <div class="pillar">
         <span class="pillar-no">03</span>
@@ -745,28 +768,41 @@
     </div>
     <p class="fig-cap reveal">
       <b>Fig. 1 — Il termometro della vita.</b> Range di crescita annotati nel database di tolleranze:
-      circa 140 °C separano gli estremi. Le lettere rimandano ai prototipi metabolici del §06.
+      circa 140 °C separano gli estremi. Le lettere rimandano ai prototipi metabolici del §05–06.
       In pressione, il limite osservato finora è ≈1400 bar (<i>Thermococcus piezophilus</i>).
     </p>
   </div>
 </section>
 
-<!-- ============ §05 REGIMI ============ -->
-<section id="regimi">
+<!-- ============ §05–06 PREVISIONE (regimi + prototipi) ============ -->
+<section id="previsione">
   <div class="wrap">
     <div class="sec-head reveal">
-      <canvas class="glyph" data-seed="regimi" aria-hidden="true"></canvas>
-      <span class="sec-no">§ 05</span>
-      <h2>Pressione, densità e sospensione: un modello illustrativo</h2>
+      <canvas class="glyph" data-seed="previsione" aria-hidden="true"></canvas>
+      <span class="sec-no">§ 05–06</span>
+      <h2>Dalla tolleranza alla previsione</h2>
       <span class="rule"></span>
     </div>
 
     <p class="lead reveal">
-      Un modello illustrativo con una sola variabile: il rapporto tra la densità
-      dell'atmosfera e quella della materia vivente (ρ<sub>bio</sub> ≈ 10³ kg/m³).
-      Distingue tre regimi di sospensione, oltre al limite piezofilo. La fascia compatibile con
-      la vita nota — la <em>Life-Compatible Zone</em> — è la parentesi a destra: il suo volume è
-      il primo ingresso dell'MLS.
+      La colonna definisce <em>dove</em> la vita può stare, i prototipi definiscono <em>chi</em>
+      è attivo, il flusso metabolico definisce <em>cosa</em> quella vita scambia con l'atmosfera.
+      Sono i tre stadi dello stesso motore: la <em>Life-Compatible Zone</em> (LCZ) dice quale
+      parte della colonna è compatibile con gli estremofili noti; i prototipi funzionali dicono
+      quali metabolismi vi si accendono; il flusso atteso è ciò che entra nella metrica MLS e,
+      più avanti, nella rete di reazioni atmosferiche (CRN).
+    </p>
+
+    <div class="subhead reveal">
+      <span class="sub-k">Dove</span>
+      <h3>La base fisica della LCZ: sospensione, sedimentazione e colonna compatibile</h3>
+    </div>
+
+    <p class="note-body reveal">
+      Un modello a una sola variabile — il rapporto tra la densità dell'atmosfera e quella della
+      materia vivente (ρ<sub>bio</sub> ≈ 10³ kg/m³) — distingue tre regimi di sospensione, oltre
+      al limite piezofilo. La fascia compatibile con la vita nota è la parentesi a destra: il suo
+      volume è il primo ingresso dell'MLS.
     </p>
     <p class="stokes reveal" data-tex="v_{s}\,=\,\tfrac{2}{9}\,\dfrac{\rho_{bio}-\rho_{atm}}{\mu}\,g\,R^{2}" data-fb="v_s = (2/9) · (Δρ/μ) · g · R²" data-display></p>
     <p class="eq-note reveal">dove R è il raggio della cellula e μ la viscosità del gas.</p>
@@ -788,7 +824,7 @@
       <div class="reveal">
         <canvas id="regimeCanvas" tabindex="0" role="slider" aria-label="Selettore di pressione atmosferica" aria-valuemin="1" aria-valuemax="2000"></canvas>
         <p class="fig-cap">
-          <b>Fig. 2 — La colonna atmosferica.</b> Modello illustrativo isotermo con ρ<sub>atm</sub> ≈ 1,2 · P
+          <b>Fig. 2 — La colonna atmosferica.</b> Modello isotermo con ρ<sub>atm</sub> ≈ 1,2 · P
           (aria a circa 290 K), valido da 1 a 2000 atm: con H₂, CO₂ o altre composizioni le soglie
           cambiano, e la linea di galleggiamento neutro a ≈833 atm vale solo per questo caso.
           v<sub>s</sub> relativa al valore in superficie. La parentesi teal delimita la <b>LCZ</b>, la porzione
@@ -799,24 +835,41 @@
         </p>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- ============ §06 PROTOTIPI ============ -->
-<section id="prototipi">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <canvas class="glyph" data-seed="prototipi" aria-hidden="true"></canvas>
-      <span class="sec-no">§ 06</span>
-      <h2>I prototipi metabolici</h2>
-      <span class="rule"></span>
+    <div class="worked reveal">
+      <span class="note-k">ESEMPIO NUMERICO — DAL VOLUME AL PUNTEGGIO</span>
+      <p class="note-body">
+        Per un pianeta con P<sub>surf</sub> = 300 atm e T<sub>eq</sub> = 280 K, la shell LCZ del
+        modello (1 mbar – 100 bar) occupa circa un terzo della massa di colonna. Il peso della
+        colonna nel punteggio si legge così:
+      </p>
+      <div class="eqbox worked-eq">
+        <span class="eq-label">Esempio — peso della colonna nel MLS</span>
+        <div data-tex="w_{\mathrm{LCZ}}=\dfrac{P_{\mathrm{hi}}-P_{\mathrm{lo}}}{P_{\mathrm{surf}}}=\dfrac{100-0{,}001}{300}\approx 0{,}33" data-fb="w_LCZ = (P_hi − P_lo)/P_surf = (100 − 0.001)/300 ≈ 0.33" data-display></div>
+        <p class="eq-note">
+          Con compatibilità termica e radiativa stimate
+          <span data-tex="f_T\approx 0{,}85" data-fb="f_T ≈ 0.85"></span> e
+          <span data-tex="f_{\mathrm{rad}}\approx 0{,}9" data-fb="f_rad ≈ 0.9"></span>, il termine
+          di colonna entra nell'MLS per circa
+          <span data-tex="w_{\mathrm{LCZ}}\,f_T\,f_{\mathrm{rad}}\approx 0{,}25" data-fb="w_LCZ · f_T · f_rad ≈ 0.25"></span>.
+          È un esempio schematico di come il volume diventa numero, non un valore del catalogo:
+          con P<sub>surf</sub> = 50 atm la stessa shell coprirebbe quasi tutta la colonna
+          (w<sub>LCZ</sub> ≈ 1), perché è la pressione di superficie a fissare il denominatore.
+        </p>
+      </div>
     </div>
 
-    <p class="lead reveal">
+    <div class="subhead reveal">
+      <span class="sub-k">Chi · cosa</span>
+      <h3>Chi è attivo, e cosa produce</h3>
+    </div>
+
+    <p class="note-body reveal">
       Le 300 specie sono raggruppate in quattro prototipi funzionali, in base alla luce che
-      assorbono e alla temperatura a cui crescono. Il raggruppamento per funzione metabolica
-      affianca la tassonomia: per i flussi di gas contano le funzioni, più dei nomi delle
-      specie.
+      assorbono e alla temperatura a cui crescono. Il raggruppamento per funzione affianca la
+      tassonomia perché, per i flussi di gas, contano le funzioni più dei nomi delle specie.
+      Ogni prototipo è un modulo del motore: la riga <b>Gas attesi</b> indica l'output che il
+      modello dovrà calcolare per una data configurazione atmosferica.
     </p>
 
     <div class="reveal" style="margin-top:clamp(36px,5vw,56px)">
@@ -836,6 +889,7 @@
             <div><dt>Pigmenti</dt><dd id="pPig"></dd></div>
             <div><dt>Picco</dt><dd id="pPk"></dd></div>
             <div><dt>Strategia</dt><dd id="pStr"></dd></div>
+            <div><dt>Gas attesi</dt><dd id="pGas"></dd></div>
           </dl>
           <p class="proto-note" id="pNote"></p>
         </div>
@@ -848,11 +902,38 @@
           <canvas id="specCanvas"></canvas>
           <p class="fig-cap">
             <b>Fig. 3 — Spettri stellari e bande dei prototipi.</b> Flussi normalizzati (corpo nero) e
-            bande caratteristiche dei prototipi. Su una nana rossa il massimo fotonico scivola oltre
-            1 μm, dominio del prototipo Gamma; è un'ipotesi in letteratura che pianeti attorno a
-            stelle M possano avere superfici non verdi. Picchi indicativi, a scopo illustrativo.
+            bande caratteristiche. Su una nana rossa il massimo fotonico scivola oltre 1 μm,
+            dominio del prototipo Gamma; è un'ipotesi in letteratura che pianeti attorno a stelle M
+            possano avere superfici non verdi. Le posizioni di banda sono di riferimento; i flussi
+            quantitativi per prototipo sono il target del motore in sviluppo (§07).
           </p>
         </div>
+      </div>
+    </div>
+
+    <div class="subhead reveal">
+      <span class="sub-k">Il limite</span>
+      <h3>La zona cieca: dove il metodo dice di non guardare</h3>
+    </div>
+
+    <div class="blind reveal">
+      <p class="note-body">
+        La LCZ dice dove la vita <em>può</em> stare; la metrica dice anche dove <em>non</em>
+        conviene cercarla. Quando la colonna compatibile è assente, o quando la finestra
+        osservativa è chiusa — per esempio al periapsis di un'orbita eccentrica — il segnale
+        abiotico non è discriminabile e il punteggio va a zero: non è un'eccezione del metodo,
+        è un criterio di selezione del target.
+      </p>
+      <div class="eqbox">
+        <span class="eq-label">Criterio — caso abiotico</span>
+        <div data-tex="\mathrm{MLS}_{\mathrm{ab}}(\varphi)\equiv 0\quad\Longleftrightarrow\quad k=0" data-fb="MLS_ab(φ) ≡ 0  ⇔  k = 0" data-display></div>
+        <p class="eq-note">
+          <span data-tex="k" data-fb="k"></span> è il numero di nicchie LCZ compatibili lungo la
+          colonna. A <span data-tex="k=0" data-fb="k=0"></span> il modello non ha nulla da
+          confrontare: la risposta corretta è «non guardare qui», non un punteggio basso. È il
+          complemento operativo del ranking: il metodo dice <em>guarda qui</em> e
+          <em>non guardare lì</em>. Poster HWO2026, Frame 5 («When the method says nothing»).
+        </p>
       </div>
     </div>
   </div>
@@ -873,9 +954,12 @@
         <p class="note-body">
           Per il termine di sorgente la cellula è trattata come <strong>black box termodinamica</strong>:
           contano i flussi in ingresso e i gas in uscita, nelle equazioni di continuità delle CRN
-          atmosferiche. Il dettaglio dei pathway, ricavato dal corredo genomico, serve a determinare
-          le rese stechiometriche.
-          Passa il puntatore sui simboli per leggere il loro ruolo.
+          atmosferiche. La catena è esplicita: <span data-tex="n_j" data-fb="n_j"></span> viene
+          dalla shell LCZ (§05–06, <em>dove</em>), il flusso
+          <span data-tex="\Phi_{i,j}" data-fb="Φ_i,j"></span> dai prototipi (§05–06,
+          <em>chi · cosa</em>), e la loro somma è il termine che la vita aggiunge al codice. Il
+          dettaglio dei pathway, ricavato dal corredo genomico, serve a determinare le rese
+          stechiometriche. Passa il puntatore sui simboli per leggere il loro ruolo.
         </p>
         <div class="terms">
           <div class="term-row" data-k="tB" tabindex="0">
@@ -898,6 +982,16 @@
             <span class="term-name">Inibizione</span>
             <span class="term-desc">La penalità ambientale: UV, estremi di pressione, aridità, tossicità.</span>
           </div>
+          <div class="term-row" data-k="tN" tabindex="0">
+            <span class="sym" data-tex="n_j" data-fb="n_j"></span>
+            <span class="term-name">Densità di nicchia</span>
+            <span class="term-desc">Cellule (o biomassa) del prototipo <i>j</i> per unità di volume nella shell LCZ, da §05–06 (<i>dove</i>).</span>
+          </div>
+          <div class="term-row" data-k="tFlux" tabindex="0">
+            <span class="sym" data-tex="\Phi_{i,j}" data-fb="Φ i,j"></span>
+            <span class="term-name">Flusso per cellula</span>
+            <span class="term-desc">Gas <i>i</i> scambiato da una cellula del prototipo <i>j</i> a T, P e composizione date, da §05–06 (<i>chi · cosa</i>).</span>
+          </div>
           <div class="term-row" data-k="tF" tabindex="0">
             <span class="sym" data-tex="\mathbf{F_{i}(t)}" data-fb="F i(t)"></span>
             <span class="term-name">Flusso biologico</span>
@@ -908,15 +1002,33 @@
 
       <div class="reveal">
         <div class="eqbox">
-          <span class="eq-label">Eq. 1 — Flusso biologico</span>
-          <div id="eq1" data-tex="F_{i}(t)\;=\;\htmlClass{tB}{B(t)}\,\cdot\,\htmlClass{tMu}{\mu\bigl(T,\,P,\,I_{\lambda}\bigr)}\,\cdot\,\htmlClass{tY}{Y_{i/\mathrm{bio}}}\,\cdot\,\htmlClass{tPhi}{\phi_{\mathrm{inhib}}}" data-fb="F_i(t) = B(t) · μ(T, P, I_λ) · Y_i/bio · φ_inhib"></div>
+          <span class="eq-label">Eq. 1 — Sorgente biologica nella shell LCZ</span>
+          <div id="eq1" data-tex="F_{i}(t)\;=\;\sum_{j}\htmlClass{tN}{n_j}\,\htmlClass{tFlux}{\Phi_{i,j}}\bigl(T,\,P,\,\mathbf{C}\bigr)" data-fb="F_i(t) = Σ_j n_j · Φ_i,j(T, P, C)"></div>
+          <p class="eq-note">
+            <span data-tex="n_j" data-fb="n_j"></span> è la densità del prototipo <i>j</i> nella
+            shell LCZ (§05–06, <em>dove</em>); <span data-tex="\Phi_{i,j}" data-fb="Φ_i,j"></span>
+            è il suo flusso netto del gas <i>i</i> (§05–06, <em>chi · cosa</em>). La somma corre
+            sui prototipi attivi nella colonna.
+          </p>
         </div>
         <div class="eqbox">
-          <span class="eq-label">Eq. 2 — Accoppiamento con la CRN</span>
-          <div id="eq2" data-tex="\frac{d[C]}{dt}\;=\;\text{Trasporto}\;+\;\text{Fotochimica}\;+\;\text{Chimica termica}\;+\;\htmlClass{tF}{\mathbf{F_{i}(t)}}" data-fb="d[C]/dt = Trasporto + Fotochimica + Chimica termica + F_i(t)"></div>
+          <span class="eq-label">Eq. 2 — Flusso biologico per prototipo</span>
+          <div id="eq2" data-tex="\Phi_{i,j}\;=\;\htmlClass{tB}{B_j(t)}\,\cdot\,\htmlClass{tMu}{\mu_j\bigl(T,\,P,\,I_{\lambda}\bigr)}\,\cdot\,\htmlClass{tY}{Y_{i/j}}\,\cdot\,\htmlClass{tPhi}{\phi_{\mathrm{inhib},\,j}}" data-fb="Φ_i,j = B_j(t) · μ_j(T, P, I_λ) · Y_i/j · φ_inhib,j"></div>
+          <p class="eq-note">
+            Ogni flusso per cellula si scompone in biomassa, crescita, resa stechiometrica e
+            inibizione: i quattro termini che il motore deve fornire per ciascun prototipo.
+          </p>
+        </div>
+        <div class="eqbox">
+          <span class="eq-label">Eq. 3 — Accoppiamento con la CRN</span>
+          <div id="eq3" data-tex="\frac{d[C]}{dt}\;=\;\text{Trasporto}\;+\;\text{Fotochimica}\;+\;\text{Chimica termica}\;+\;\htmlClass{tF}{\mathbf{F_{i}(t)}}" data-fb="d[C]/dt = Trasporto + Fotochimica + Chimica termica + F_i(t)"></div>
           <p class="eq-note">
             L'equazione di continuità atmosferica: trasporto, fotochimica, chimica termica —
-            e in grassetto, l'unico contributo della biosfera.
+            e in grassetto, l'unico contributo della biosfera. Il confronto tra
+            <span data-tex="F_i(t)" data-fb="F_i(t)"></span> e i termini abiotici è ciò che
+            distingue un pianeta <em>geo-driven</em>, <em>photo-driven</em>, <em>bio-driven</em> o
+            <em>hybrid-driven</em> (§01): la classificazione non è un'etichetta, è il rapporto tra
+            le magnitudini nella CRN.
           </p>
         </div>
         <p class="ilam">
@@ -1251,8 +1363,7 @@
           <li><a href="#database">§02 — Database</a></li>
           <li><a href="#paradigma">§03 — Paradigma</a></li>
           <li><a href="#estremofili">§04 — Estremofili</a></li>
-          <li><a href="#regimi">§05 — Pressione e sospensione</a></li>
-          <li><a href="#prototipi">§06 — Prototipi metabolici</a></li>
+          <li><a href="#previsione">§05–06 — Dalla tolleranza alla previsione</a></li>
           <li><a href="#modello">§07 — Modello</a></li>
           <li><a href="#percorso">§08 — Percorso</a></li>
           <li><a href="#roadmap">§09 — Stato</a></li>
@@ -1724,7 +1835,7 @@ const spyIO=new IntersectionObserver(es=>{
     }
   });
 },{rootMargin:"-35% 0px -55% 0px"});
-["paradigma","estremofili","regimi","modello","percorso","roadmap"].forEach(id=>{
+["paradigma","estremofili","previsione","modello","percorso","roadmap"].forEach(id=>{
   const el=document.getElementById(id);if(el)spyIO.observe(el);
 });
 
@@ -1970,19 +2081,23 @@ const nG=normFn(5778),nM=normFn(2600);
 const PROTOS={
  alpha:{g:"Α",nome:"Alpha — Earth-Like",org:"Synechocystis sp.",T:"5 – 40 °C",
   pig:"Clorofilla a",pk:"680 nm",str:"Fotosintesi ossigenica",
-  note:"Prototipo di riferimento: fotosintesi ossigenica, la strategia meglio caratterizzata. È un riferimento descrittivo e non un modello ideale: gli altri prototipi sono definiti per differenza funzionale.",
+  gas:"CO₂ ↓ · O₂ ↑",
+  note:"Prototipo di riferimento: fotosintesi ossigenica, la strategia meglio caratterizzata. È un riferimento descrittivo e non un modello ideale: gli altri prototipi sono definiti per differenza funzionale. Il flusso numerico è l'output del motore (§07), non una misura.",
   bands:[[680,48]]},
  beta:{g:"Β",nome:"Beta — Hot / Volcanic",org:"Mastigocladus sp.",T:"40 – 75 °C",
   pig:"Chl a + ficobiliproteine",pk:"≈ 620 nm",str:"Termofilia · tolleranza allo zolfo",
-  note:"Descritto in sorgenti calde terrestri: rappresenta ambienti vulcanici o geotermici, dove la temperatura esclude la maggior parte degli altri organismi.",
+  gas:"CO₂ ↓ · O₂ ↑ · composti dello zolfo",
+  note:"Descritto in sorgenti calde terrestri: rappresenta ambienti vulcanici o geotermici, dove la temperatura esclude la maggior parte degli altri organismi. Il flusso numerico è l'output del motore (§07), non una misura.",
   bands:[[620,64]]},
  gamma:{g:"Γ",nome:"Gamma — M-Dwarf Specialist",org:"Acaryochloris · Blastochloris",T:"da definire",
   pig:"Chl d/f · BChl b",pk:"710 – 750 · ≈ 1020 nm",str:"Fotosintesi nel vicino infrarosso",
-  note:"Descrive la fotosintesi nel vicino infrarosso, che potrebbe essere vantaggiosa attorno a stelle di tipo M, dove lo spettro è spostato verso lunghezze d'onda maggiori. Per questi mondi in letteratura sono state proposte superfici non verdi (ipotesi: Kiang et al., 2007; Hegde e Kaltenegger, 2013).",
+  gas:"CO₂ ↓ · O₂ ↑ (Acaryochloris) · VOC organici",
+  note:"Descrive la fotosintesi nel vicino infrarosso, che potrebbe essere vantaggiosa attorno a stelle di tipo M, dove lo spettro è spostato verso lunghezze d'onda maggiori. Per questi mondi in letteratura sono state proposte superfici non verdi (ipotesi: Kiang et al., 2007; Hegde e Kaltenegger, 2013). Il ramo Acaryochloris è ossigenico, Blastochloris anossigenico: il segno di O₂ dipende dal ramo.",
   bands:[[725,62],[1015,74]]},
  delta:{g:"Δ",nome:"Delta — Cryo / Ice",org:"Chlamydomonas nivalis",T:"≈ 0 °C",
   pig:"Astaxantina (schermo) + Chl a",pk:"400 – 500 nm (schermante)",str:"Criofilia · schermatura UV",
-  note:"Vive dove il ghiaccio filtra la luce: l'astaxantina agisce da schermo contro l'eccesso di luce e UV, più che da antenna per la raccolta di fotoni.",
+  gas:"CO₂ ↓ · O₂ ↑ · schermo UV",
+  note:"Vive dove il ghiaccio filtra la luce: l'astaxantina agisce da schermo contro l'eccesso di luce e UV, più che da antenna per la raccolta di fotoni. Il flusso numerico è l'output del motore (§07), non una misura.",
   bands:[[455,96]]}
 };
 let curP="alpha";
@@ -2068,6 +2183,7 @@ function setProto(key){
   document.getElementById("pPig").textContent=pr.pig;
   document.getElementById("pPk").textContent=pr.pk;
   document.getElementById("pStr").textContent=pr.str;
+  document.getElementById("pGas").textContent=pr.gas;
   document.getElementById("pNote").textContent=pr.note;
   box.classList.remove("swap");void box.offsetWidth;box.classList.add("swap");
   drawSpec();
@@ -2099,7 +2215,7 @@ function renderMath(){
     }
     el.textContent=el.dataset.fb||"";
   });
-  const allKeys=["tB","tMu","tY","tPhi","tF"];
+  const allKeys=["tB","tMu","tY","tPhi","tF","tN","tFlux"];
   const setLit=k=>{
     allKeys.forEach(key=>{
       document.querySelectorAll(".eqbox ."+key).forEach(s=>
