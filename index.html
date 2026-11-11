@@ -115,9 +115,9 @@
   .ring-col{display:flex;flex-direction:column;align-items:center;gap:18px}
   .ring-stage{
     position:relative;width:min(100%,500px);aspect-ratio:1/1;cursor:pointer;
-    border-radius:50%;
+    border-radius:50%;perspective:900px;transform-style:preserve-3d;
   }
-  .ring-px{position:absolute;inset:0;will-change:transform}
+  .ring-px{position:absolute;inset:0;will-change:transform;transform-style:preserve-3d}
   .ring-rot{position:absolute;inset:0;animation:slowspin 300s linear infinite}
   @keyframes slowspin{to{transform:rotate(360deg)}}
   #heroRing{position:absolute;inset:0;width:100%;height:100%;display:block}
@@ -2120,41 +2120,394 @@ const navG=Logos.add(document.getElementById("navGlyph"),hashSeed("exobioma"),
   {bands:1,splat:2,sat:.25,thin:1.25,r:.42,ghost:0});
 if(navG)navG.play(1,0);
 
-const heroG=Logos.add(document.getElementById("heroRing"),Logogram.fixSeed(Math.random()*1e9),
-  {bands:2,splat:9,sat:.8,inner:.12,r:.36});
+/* ============================================================
+   HERO — Studio 02 "Denso": nastro d'inchiostro
+   Il motore generativo sviluppato in ring.html: normali reali,
+   dinamica del pennello, accumuli, setole asciutte e schizzi a
+   contorno irregolare. Incapsulato per non toccare il resto.
+============================================================ */
+const InkRing=(function(){
+const TAU=Math.PI*2, W=700, C='#171614';
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+function rng(seed){let s=seed>>>0;return()=>{s=(s+0x6D2B79F5)>>>0;let t=s;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}}
+function smoothstep(a,b,x){let t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)}
+function gauss(x,mu,s){let d=Math.abs(x-mu);d=Math.min(d,TAU-d);return Math.exp(-.5*(d/s)**2)}
+// Frequenze intere: i campi restano periodici su TAU e la cucitura del cerchio non si vede.
+function noiseTerms(R,n,f0,f1,a){return Array.from({length:n},()=>({f:Math.max(1,Math.round(f0+R()*(f1-f0))),p:R()*TAU,a:a*(.35+.65*R())}))}
+function field(t,terms){return terms.reduce((s,q)=>s+q.a*Math.sin(q.f*t+q.p),0)}
 
-const stage=document.getElementById("ringStage");
-function reseed(){
-  if(!heroG)return;
-  heroG.reseed(Math.random()*1e9);
-  heroG.play(1,reduced?0:2200);
+// Aperture distribuite lungo la circonferenza. Crescendo il numero di aperture
+// cresce anche la loro ampiezza: più punti aperti e archi mancanti più larghi.
+function makeBreaks(R,count){
+ const out=[];
+ for(let i=0;i<count;i++){
+  const at=((i+(.2+R()*.6))/count)*TAU;
+  const half=.022+count*.023+R()*.012;
+  out.push([at,half]);
+ }
+ return out;
 }
-if(stage){
-  stage.addEventListener("click",reseed);
-  stage.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();reseed()}});
-}
-stage.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();reseed()}});
 
-/* parallasse leggera del logogramma — lavora solo mentre l'hero è in vista */
+// Dinamica del gesto: atterraggio, consumo progressivo dell'inchiostro, sollevamento.
+// Il carico cala lungo il percorso e i bordi diventano più secchi verso la fine.
+function strokeEnvelope(u){
+ const land=.18+.82*smoothstep(0,.028,u);
+ const lift=.15+.85*(1-smoothstep(.968,1,u));
+ const reserve=.8+.2*Math.exp(-2.3*u);
+ return {land,lift,reserve};
+}
+
+// Contorno chiuso e irregolare per macchie e schizzi: ellisse deformata da
+// armoniche, con eventuali protuberanze (spikes) come veri schizzi d'inchiostro.
+function makeBlobVerts(R,cx,cy,rx,ry,rot,opts){
+ const o=opts||{};
+ const irr=o.irr??.12, spikes=o.spikes??0, detail=o.detail??9;
+ const n=Math.max(6,detail+Math.round(R()*8));
+ const cr=Math.cos(rot), sr=Math.sin(rot);
+ const p1=R()*TAU, p2=R()*TAU, p3=R()*TAU;
+ const h1=irr*(.45+R()*.55), h2=irr*(.25+R()*.5), h3=irr*(.15+R()*.35);
+ const sp=[];
+ for(let k=0;k<spikes;k++) sp.push({a:R()*TAU,amp:irr*(1.2+R()*1.8),w:.10+R()*.15});
+ const verts=[];
+ for(let i=0;i<n;i++){
+  const a=TAU*i/n;
+  let rr=1+h1*Math.sin(2*a+p1)+h2*Math.sin(3*a+p2)+h3*Math.sin(5*a+p3);
+  for(const s of sp){
+   let d=Math.abs(a-s.a);d=Math.min(d,TAU-d);
+   rr+=s.amp*Math.exp(-.5*(d/s.w)**2);
+  }
+  rr=Math.max(.45,rr);
+  const ex=Math.cos(a)*rx*rr, ey=Math.sin(a)*ry*rr;
+  verts.push([cx+ex*cr-ey*sr, cy+ex*sr+ey*cr]);
+ }
+ return verts;
+}
+
+function build(seed,params){
+ // Generatori separati: cambiare uno slider non rimescola gli altri parametri.
+ // Lo spessore resta l'unico parametro che scala anche il carico e le macchie.
+ const R=rng(seed);          // forma, carico, pressione
+ const RB=rng(seed+113);     // aperture
+ const RBump=rng(seed+557);  // protuberanze e macchie del bordo
+ const REdge=rng(seed+227);  // onde e micro-frastaglio del bordo
+ const RS=rng(seed+331);     // schizzi
+ const RT=rng(seed+443);     // setole e filamenti
+ const RK=rng(seed+619);     // contorni di macchie e schizzi
+
+ const rough=params.rough;
+ const breaks=makeBreaks(RB,params.gaps);
+ const low=noiseTerms(R,5,1,4,4.3*params.irregular);
+ const blobs=Array.from({length:5},()=>({a:R()*TAU,s:.16+R()*.27,h:params.width*.8*(.45+R()*.9)}));
+
+ // Protuberanze: più rugosità = più macchie e sbavature che protrudono dal bordo.
+ const bumps=[];
+ const bumpCount=Math.round(rough*80);
+ for(let i=0;i<bumpCount;i++){
+  const a=RBump()*TAU;
+  const side=RBump()<.65?1:-1;
+  const s=.008+RBump()*.05;
+  const h=(2+RBump()*9)*rough;
+  const dab=RBump()<.42?{rx:1.5+RBump()*4.5,ry:1+RBump()*3}:null;
+  bumps.push({a,side,s,h,dab});
+ }
+ // Onde indipendenti sui due lati: il bordo non è una sinusoide unica e regolare.
+ const waveOut=noiseTerms(REdge,5,12,40,1);
+ const waveIn=noiseTerms(REdge,5,12,40,1);
+
+ const N=1300;
+ const pts=new Array(N);
+ const bumpOut=new Float32Array(N);
+ const bumpIn=new Float32Array(N);
+
+ // Protuberanze applicate solo ai campioni vicini (finestra ~4 sigma):
+ // stesso risultato del calcolo su tutti i punti, molto più veloce.
+ if(rough>0){
+  for(const b of bumps){
+   const span=Math.ceil(4*b.s/TAU*N)+1;
+   const center=Math.round(b.a/TAU*N);
+   for(let k=-span;k<=span;k++){
+    const i=((center+k)%N+N)%N;
+    const t=TAU*i/N;
+    let d=Math.abs(t-b.a);d=Math.min(d,TAU-d);
+    const v=Math.exp(-.5*(d/b.s)**2)*b.h;
+    if(b.side>0){if(v>bumpOut[i])bumpOut[i]=v}
+    else{if(v>bumpIn[i])bumpIn[i]=v}
+   }
+  }
+ }
+
+ for(let i=0;i<N;i++){
+  const t=TAU*i/N;
+  const u=t/TAU;
+  let pressure=0;for(const b of blobs)pressure+=b.h*gauss(t,b.a,b.s);
+  // Irregolarità: solo la forma del percorso (deriva lenta + asimmetria del cerchio).
+  // Frequenze intere anche qui, così il giro si chiude senza salti.
+  const center=224+field(t,low)
+   +(2.2*Math.sin(t*2+.8)+1.2*Math.sin(t*4+1.4))*params.irregular;
+  // Chiusura: nucleo senza inchiostro, con spalle morbide ai lati dell'apertura.
+  let gap=1;
+  for(const [at,half] of breaks){
+   let d=Math.abs(t-at);d=Math.min(d,TAU-d);
+   gap*=smoothstep(half*.55,half,d);
+  }
+  const env=strokeEnvelope(u);
+  const roughScale=env.land*env.lift;
+  const w=(params.width*env.reserve+pressure)*roughScale*gap;
+  // Rugosità: solo i due bordi del nastro. A 0 restano perfettamente lisci.
+  let eo=w*.5, ei=w*.5;
+  if(rough>0){
+   const fineO=(REdge()-.5)*2.6*rough;
+   const fineI=(REdge()-.5)*2.6*rough;
+   // La secchezza aumenta verso la fine del gesto, quando il pennello ha meno inchiostro.
+   const dry=smoothstep(.55,1,u)*rough;
+   eo+=(field(t,waveOut)*1.4*rough+fineO+bumpOut[i]+(REdge()-.5)*3.2*dry)*gap*roughScale;
+   ei+=(field(t,waveIn)*1.4*rough+fineI+bumpIn[i]+(REdge()-.5)*3.2*dry)*gap*roughScale;
+   eo=Math.max(0,eo);ei=Math.max(0,ei);
+  }
+  pts[i]={
+   t,u,cx:350+Math.cos(t)*center,cy:350+Math.sin(t)*center,w,eo,ei,
+   nx:Math.cos(t),ny:Math.sin(t),br:null,dry:null
+  };
+ }
+
+ // Normale reale del percorso (differenze centrali sulla polilinea chiusa),
+ // orientata verso l'esterno del cerchio: lo spessore resta perpendicolare al tratto.
+ for(let i=0;i<N;i++){
+  const prev=pts[(i-1+N)%N], next=pts[(i+1)%N], p=pts[i];
+  let tx=next.cx-prev.cx, ty=next.cy-prev.cy;
+  const len=Math.hypot(tx,ty)||1;tx/=len;ty/=len;
+  let nx=-ty, ny=tx;
+  if(nx*(p.cx-350)+ny*(p.cy-350)<0){nx=-nx;ny=-ny}
+  p.nx=nx;p.ny=ny;
+ }
+
+ // Setole e filamenti asciutti precalcolati: la tessitura resta stabile tra un frame e l'altro.
+ // I filamenti diventano più probabili e più lunghi man mano che l'inchiostro si esaurisce.
+ for(let i=0;i<N;i++){
+  const p=pts[i];
+  p.br=(i%17===0&&RT()<.8)?{w:.5+RT()*1.6,off:(RT()-.5)*.65}:null;
+  const dryness=.08+.32*p.u*p.u;
+  p.dry=(i%9===0&&RT()<dryness)?{w:.5+RT()*1.2,sign:RT()<.5?1:-1,len:(2+RT()*13)*(1+.6*p.u)}:null;
+ }
+
+ // Macchie tondeggianti (contorno appena irregolare) ancorate alle protuberanze più generose.
+ const dabs=[];
+ for(const b of bumps){
+  if(!b.dab)continue;
+  const p=pts[Math.floor(b.a/TAU*N)%N];
+  const edge=b.side>0?p.eo:p.ei;
+  if(edge<1)continue;
+  const rr=b.side>0?p.eo-b.dab.ry*.45:-(p.ei-b.dab.ry*.45);
+  const cx=p.cx+p.nx*rr, cy=p.cy+p.ny*rr;
+  const rot=Math.atan2(p.ny,p.nx)+Math.PI/2;
+  dabs.push({
+   at:b.a,
+   verts:makeBlobVerts(RK,cx,cy,b.dab.rx,b.dab.ry,rot,{irr:.07+RK()*.09,detail:12})
+  });
+ }
+
+ // Schizzi ancorati ai punti di pressione del gesto, posizionati lungo la normale reale
+ // con una piccola dispersione tangenziale. Ogni schizzo ha contorno irregolare e
+ // a volte qualche gocciolina satellite.
+ const anchors=blobs.map(b=>b.a);
+ const splats=[];
+ for(let i=0;i<42;i++){
+  let t=RS()<.78?anchors[Math.floor(RS()*anchors.length)]+(RS()-.5)*.48:RS()*TAU;
+  t=(t+TAU)%TAU;
+  const p=pts[Math.floor(t/TAU*N)%N];
+  const side=RS()<.72?1:-1;
+  const edge=side>0?p.eo:p.ei;
+  if(edge<1)continue;
+  const dist=5+Math.pow(RS(),1.7)*58;
+  const tang=(RS()-.5)*18;
+  const rr=side>0?p.eo+dist:-(p.ei+dist);
+  const x=p.cx+p.nx*rr-p.ny*tang;
+  const y=p.cy+p.ny*rr+p.nx*tang;
+  const radius=1.4+Math.pow(RS(),2.1)*8;
+  const rx=radius*(.45+RS()*1.4), ry=radius*(.35+RS()*1.1);
+  const rot=RS()*TAU;
+  const verts=makeBlobVerts(RK,x,y,rx,ry,rot,{
+   irr:.18+RK()*.22,spikes:RK()<.55?1:2,detail:12
+  });
+  const sats=[];
+  if(RK()<.24){
+   const k=1+Math.floor(RK()*3);
+   for(let j=0;j<k;j++){
+    const a=RK()*TAU, d=(rx+ry)*.5*(1.15+RK()*.9);
+    const sr=.55+Math.pow(RK(),2)*2.1;
+    sats.push(makeBlobVerts(RK,x+Math.cos(a)*d,y+Math.sin(a)*d,
+     sr*(.6+RK()*.8),sr*(.55+RK()*.7),RK()*TAU,{irr:.16+RK()*.2,detail:8}));
+   }
+  }
+  splats.push({at:t,delay:RS()*.055,verts,sats});
+ }
+ return {pts,dabs,splats};
+}
+
+function fillPoly(c,v){
+ c.beginPath();c.moveTo(v[0][0],v[0][1]);
+ for(let i=1;i<v.length;i++)c.lineTo(v[i][0],v[i][1]);
+ c.closePath();c.fill();
+}
+
+function renderProgress(canvas,model,progress){
+ const size=Math.round(canvas.clientWidth||canvas.getBoundingClientRect().width||W);
+ if(size<4)return false;
+ const dpr=Math.min(window.devicePixelRatio||1,2);
+ const side=Math.max(8,Math.round(size*dpr));
+ if(canvas.width!==side||canvas.height!==side){canvas.width=side;canvas.height=side;}
+ const c=canvas.getContext('2d');
+ if(!c)return false;
+ c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,side,side);
+ const k=side/W;c.setTransform(k,0,0,k,0,0);
+ const {pts,dabs,splats}=model,N=pts.length,stop=Math.floor(N*progress);
+ c.fillStyle=C;
+ // Corpo del tratto in un unico path: ogni segmento è un'impronta con bordi
+ // indipendenti (eo/ei) offset lungo la normale reale.
+ if(stop>0){
+  c.beginPath();
+  for(let i=1;i<=stop;i++){
+   const a=pts[i-1],b=pts[i%N];
+   if(Math.max(a.eo,a.ei,b.eo,b.ei)<.3)continue;
+   c.moveTo(a.cx+a.nx*a.eo,a.cy+a.ny*a.eo);
+   c.lineTo(b.cx+b.nx*b.eo,b.cy+b.ny*b.eo);
+   c.lineTo(b.cx-b.nx*b.ei,b.cy-b.ny*b.ei);
+   c.lineTo(a.cx-a.nx*a.ei,a.cy-a.ny*a.ei);
+   c.closePath();
+  }
+  c.fill();
+ }
+ // Canali di setole: sottili solchi trasparenti allineati alla direzione del pennello.
+ c.save();
+ c.globalCompositeOperation='destination-out';
+ c.strokeStyle='rgba(0,0,0,.7)';
+ c.lineCap='round';
+ for(let i=1;i<=stop;i++){
+  const a=pts[i-1],b=pts[i%N];
+  if(!a.br)continue;
+  const oa=a.br.off*(a.eo+a.ei), ob=a.br.off*(b.eo+b.ei);
+  c.lineWidth=a.br.w;
+  c.beginPath();
+  c.moveTo(a.cx+a.nx*oa,a.cy+a.ny*oa);
+  c.lineTo(b.cx+b.nx*ob,b.cy+b.ny*ob);
+  c.stroke();
+ }
+ c.restore();
+ // Filamenti asciutti sul bordo, non un dente di sega regolare.
+ c.strokeStyle=C;c.lineCap='round';
+ for(let i=1;i<=stop;i++){
+  const b=pts[i%N];
+  if(!b.dry)continue;
+  const sign=b.dry.sign, edge=sign>0?b.eo:b.ei;
+  if(edge<1)continue;
+  const len=b.dry.len, tx=-b.ny, ty=b.nx;
+  c.lineWidth=b.dry.w;
+  c.beginPath();
+  c.moveTo(b.cx+b.nx*sign*edge*.82,b.cy+b.ny*sign*edge*.82);
+  c.quadraticCurveTo(
+   b.cx+b.nx*sign*(edge*.9+len*.45)+tx*len*.1,
+   b.cy+b.ny*sign*(edge*.9+len*.45)+ty*len*.1,
+   b.cx+b.nx*sign*(edge*.9+len)+tx*len*.3,
+   b.cy+b.ny*sign*(edge*.9+len)+ty*len*.3);
+  c.stroke();
+ }
+ // Macchie: compaiono quando il pennello raggiunge il punto da cui sbavano.
+ for(const d of dabs){
+  if(progress<d.at/TAU)continue;
+  const fade=clamp((progress-d.at/TAU)/.02,0,1);
+  c.globalAlpha=fade;
+  fillPoly(c,d.verts);
+ }
+ // Schizzi: contorni irregolari, rivelati quando la punta raggiunge la loro origine.
+ for(const s of splats){
+  const appear=Math.min(s.at/TAU+s.delay,.985);
+  if(progress<appear)continue;
+  const fade=clamp((progress-appear)/.018,0,1);
+  c.globalAlpha=fade;
+  fillPoly(c,s.verts);
+  for(const v of s.sats)fillPoly(c,v);
+ }
+ c.globalAlpha=1;
+ return true;
+}
+return {build,render:renderProgress};
+})();
+
+const inkCanvas=document.getElementById("heroRing");
+const inkStage=document.getElementById("ringStage");
+const INK_DURATION=3900;
+let inkModel=null,inkRaf=null,inkStart=0,inkProgress=1;
+let inkSeed=Math.floor(Math.random()*900000)+100000;
+let inkParams={width:14,rough:.35,irregular:1,gaps:1};
+
+function randomInkSeed(){return Math.floor(Math.random()*900000)+100000}
+// Il ridisegno randomico varia anche i quattro parametri dello studio.
+function randomInkParams(){
+ return {
+  width:Math.round(6+Math.random()*13),   // 6–19
+  rough:.08+Math.random()*1.17,           // 0.08–1.25
+  irregular:.25+Math.random()*2.15,       // 0.25–2.40
+  gaps:Math.floor(Math.random()*5)        // 0–4
+ };
+}
+function buildInk(){inkModel=InkRing.build(inkSeed,inkParams)}
+function drawInk(p){inkProgress=p;if(inkModel)InkRing.render(inkCanvas,inkModel,p)}
+function stopInk(){if(inkRaf){cancelAnimationFrame(inkRaf);inkRaf=null}}
+function playInk(from){
+ stopInk();
+ if(!inkModel)buildInk();
+ if(reduced){drawInk(1);return}
+ inkStart=performance.now()-(from||0)*INK_DURATION;
+ const tick=now=>{
+  const p=clamp((now-inkStart)/INK_DURATION,0,1);
+  drawInk(p);
+  if(p<1)inkRaf=requestAnimationFrame(tick);else inkRaf=null;
+ };
+ inkRaf=requestAnimationFrame(tick);
+}
+function newInk(){
+ inkSeed=randomInkSeed();
+ inkParams=randomInkParams();
+ buildInk();
+ playInk(0);
+}
+if(inkCanvas){
+ buildInk();
+ if(reduced)drawInk(1);else playInk(0);
+ if(typeof ResizeObserver!=="undefined"){
+  new ResizeObserver(()=>{if(inkModel)InkRing.render(inkCanvas,inkModel,inkProgress)}).observe(inkCanvas);
+ }else{
+  addEventListener("resize",()=>{if(inkModel)InkRing.render(inkCanvas,inkModel,inkProgress)});
+ }
+}
+if(inkStage){
+ inkStage.addEventListener("click",newInk);
+ inkStage.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();newInk()}});
+}
+
+/* parallasse del tratto — lavora solo mentre l'hero è in vista */
 if(!reduced){
   const hero=document.getElementById("top"),px=document.getElementById("ringPx");
   if(hero&&px){
-    let tx=0,ty=0,cx=0,cy=0,live=true;
+    let tx=0,ty=0,rx=0,ry=0,cx=0,cy=0,crx=0,cry=0,live=true;
     hero.addEventListener("pointermove",e=>{
       const r=hero.getBoundingClientRect();
-      tx=((e.clientX-r.left)/Math.max(1,r.width)-.5)*14;
-      ty=((e.clientY-r.top)/Math.max(1,r.height)-.5)*14;
+      const nx=((e.clientX-r.left)/Math.max(1,r.width)-.5);
+      const ny=((e.clientY-r.top)/Math.max(1,r.height)-.5);
+      tx=nx*22;ty=ny*22;
+      ry=nx*13;rx=-ny*13;
     });
-    hero.addEventListener("pointerleave",()=>{tx=0;ty=0});
+    hero.addEventListener("pointerleave",()=>{tx=0;ty=0;rx=0;ry=0});
     if("IntersectionObserver" in window){
       new IntersectionObserver(es=>{live=es.some(en=>en.isIntersecting)},{threshold:0}).observe(hero);
     }
     (function pl(){
-      if(live&&(Math.abs(tx-cx)>.01||Math.abs(ty-cy)>.01)){
+      if(live){
         cx+=(tx-cx)*.06;cy+=(ty-cy)*.06;
-        px.style.transform="translate("+cx.toFixed(2)+"px,"+cy.toFixed(2)+"px)";
+        crx+=(rx-crx)*.06;cry+=(ry-cry)*.06;
+        px.style.transform="translate3d("+cx.toFixed(2)+"px,"+cy.toFixed(2)+"px,0) rotateX("+crx.toFixed(2)+"deg) rotateY("+cry.toFixed(2)+"deg) scale(1.02)";
       }
-      requestAnimationFrame(pl)
+      requestAnimationFrame(pl);
     })();
   }
 }
@@ -2194,7 +2547,7 @@ const glyphIO=new IntersectionObserver(es=>{
     if(startFor(en.target))glyphIO.unobserve(en.target);
   }
 },{threshold:[0,.3],rootMargin:"0px 0px -8% 0px"});
-document.querySelectorAll(".glyph[data-seed],.rglyph,.pglyph,#ringBefore,#ringAfter,#heroRing")
+document.querySelectorAll(".glyph[data-seed],.rglyph,.pglyph,#ringBefore,#ringAfter")
   .forEach(cv=>glyphIO.observe(cv));
 
 /* reti di sicurezza: un anello in vista che non è mai partito riparte;
