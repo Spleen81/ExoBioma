@@ -1,19 +1,59 @@
-1. O'Malley-James, J. T., & Kaltenegger, L. (2018). The Habitable Zone for Earthlike Exoplanets around M Dwarfs: Track through Time. Astrophysical Journal Letters, 860(2), L18. (Per la modellazione della compatibilità e delle variazioni temporali e di fase).
+1. Cockell, C. S., et al. (2016).
+   Habitability: A Review.
+   Astrobiology, 16(1), 89–117.
+   https://doi.org/10.1089/ast.2015.1295
+   Definizioni di abitabilità istantanea e abitabilità planetaria nel tempo; quadro concettuale per discutere la compatibilità ambientale. Non costituisce una validazione diretta dell’indice MLS.
 
-2. Meadows, V. S., et al. (2018). The Habitability of Proxima Centauri b. II. Possible Atmospheres and Observational Discriminants. Astrobiology, 18(2), 133-189. (Per la discriminazione delle biofirme e lo studio delle atmosfere planetarie).
+2. Meadows, V. S., et al. (2018).
+   The Habitability of Proxima Centauri b: Environmental States and Observational Discriminants.
+   Astrobiology, 18(2), 133–189.
+   https://doi.org/10.1089/ast.2016.1589
+   Scenari ambientali alternativi per un esopianeta e conseguenze per la caratterizzazione osservativa.
 
-3. Schwieterman, E. W., et al. (2018). Exoplanet Biosignatures: A Review of Remotely Detectable Signs of Life. Astrobiology, 18(6), 663-708. (Per l'inventario metabolico, i gas traccianti e i falsi positivi abiotici).
+3. Schwieterman, E. W., et al. (2018).
+   Exoplanet Biosignatures: A Review of Remotely Detectable Signs of Life.
+   Astrobiology, 18(6), 663–708.
+   https://doi.org/10.1089/ast.2017.1729
+   Repertorio di biosignature, contesto planetario, falsi positivi e interpretazione dei gas atmosferici.
 
-4. Krissansen-Totton, J., et al. (2018). Detectability of Atmospheric Disequilibrium Beyond the Solar System as a Biosignature of Non-Equilibrium States. Astrophysical Journal, 853(1), 29. (Per le reti di reazione chimica e il disequilibrio metabolico).
+4. Catling, D. C., et al. (2018).
+   Exoplanet Biosignatures: A Framework for Their Assessment.
+   Astrobiology, 18(6), 709–738.
+   https://doi.org/10.1089/ast.2017.1737
+   Rilevanza: valutazione delle biosignature nel contesto ambientale e uso di modelli biogeochimici; utile per inquadrare la distinzione tra rilevazione e interpretazione.
 
-5. Wordsworth, R. D., et al. (2011). Gliese 581d is the First Discovered Super-Earth-size Exoplanet in the Habitable Zone. Icarus, 219(1), 267-279. (Per la dinamica climatica e il forcing orbitale su mondi eccentrici).
+5. Krissansen-Totton, J., Bergsman, D. S., & Catling, D. C. (2016).
+   On Detecting Biospheres from Chemical Thermodynamic Disequilibrium in Planetary Atmospheres.
+   Astrobiology, 16(1), 39–67.
+   https://doi.org/10.1089/ast.2015.1327
+   Disequilibrio chimico atmosferico e quantificazione termodinamica; riferimento per il contesto chimico della CRN. Non presenta, però, una CRN metabolica dinamica come quella ipotizzata in Exobioma.
 
-6. Seager, S., et al. (2013). Biosignature Gases in H$_2$-Rich Atmospheres on Super-Earths and Mini-Neptunes. Astrophysical Journal, 777(2), 95. (Per l'analisi delle firme gassose e delle classi di risposta metabolica).
+6. Krissansen-Totton, J., Olson, S., & Catling, D. C. (2018).
+   Disequilibrium Biosignatures over Earth History and Implications for Detecting Exoplanet Life.
+   Science Advances, 4(1), eaao5747.
+   https://doi.org/10.1126/sciadv.aao5747
+   Evoluzione temporale delle condizioni atmosferico-oceaniche e delle biosignature di disequilibrio nella storia terrestre; utile per contestualizzare la dipendenza delle biosignature dalla storia planetaria.
 
-7. Fujii, Y., et al. (2018). Exoplanet Diversity: A Framework for Characterizing Exoplanets. Astrobiology, 18(6), 739-778. (Per le osservazioni a risoluzione di fase e l'analisi armonica delle curve di luce e spettri).
+7. Seager, S., Bains, W., & Hu, R. (2013).
+   A Biomass-Based Model to Estimate the Plausibility of Exoplanet Biosignature Gases.
+   The Astrophysical Journal, 775(2), 104.
+   https://doi.org/10.1088/0004-637X/775/2/104
+   Collega plausibilità dei gas biosignature, fotochimica atmosferica, termodinamica biologica e biomassa richiesta. Utile per motivare il passaggio dal potenziale metabolico a flussi gassosi plausibili.
 
-8. Stark, C. C., et al. (2014). Maximizing Yield of Earth-analog Exoplanets from a Future Direct-Imaging Mission. Journal of Astronomical Telescopes, Instruments, and Systems, 1(1), 014001. (Per la pianificazione delle epoche, i limiti del coronografo e la copertura orbitale / IWA).
+8. Wordsworth, R. D., Forget, F., Selsis, F., Millour, E., Charnay, B., & Madeleine, J.-B. (2011).
+   Gliese 581d Is the First Discovered Terrestrial-Mass Exoplanet in the Habitable Zone.
+   The Astrophysical Journal Letters, 733(2), L48.
+   https://doi.org/10.1088/2041-8205/733/2/L48
+   Modellizzazione climatica tridimensionale e valutazione della possibilità di condizioni superficiali compatibili con acqua liquida. È un riferimento di contesto climatico, non una dimostrazione specifica degli effetti di eccentricità studiati nel poster.
 
-9. Cockell, C. S., et al. (2016). Habitability: A Review. Astrobiology, 16(1), 89-117. (Per i limiti termici degli estremofili e la quantificazione dell'abitabilità basata su parametri multipli).
+9. Cowan, N. B., & Agol, E. (2008).
+   Inverting Phase Functions to Map Exoplanets.
+   The Astrophysical Journal Letters, 678(2), L129–L132.
+   https://doi.org/10.1086/588553
+   Relazione tra variazioni di fase osservate e proprietà spaziali del pianeta; riferimento metodologico per l’informazione contenuta nelle curve di fase. Non tratta direttamente la variabilità orbitale dell’exobioma né il test armonico J.
 
-10. Catling, D. C., et al. (2018). Atmospheric Oxygen, Environmental Evolution, and Biosignatures on Exoplanets. Philosophical Transactions of the Royal Society A, 376(2114), 20170390. (Per la stabilità a lungo termine, le catene di reazione e l'esclusione della classe a singola risposta).
+10. Stark, C. C., Roberge, A., Mandell, A., & Robinson, T. D. (2014).
+    Maximizing the ExoEarth Candidate Yield from a Future Direct Imaging Mission.
+    The Astrophysical Journal, 795(2), 122.
+    https://doi.org/10.1088/0004-637X/795/2/122
+    Rilevanza: rendimento osservativo delle missioni di imaging diretto, completeness e dipendenza dai parametri strumentali e dalla geometria. Riferimento di contesto per la finestra osservativa, non validazione della specifica strategia HWO proposta.
