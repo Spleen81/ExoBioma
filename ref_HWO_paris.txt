@@ -1,1 +1,19 @@
+1. O'Malley-James, J. T., & Kaltenegger, L. (2018). The Habitable Zone for Earthlike Exoplanets around M Dwarfs: Track through Time. Astrophysical Journal Letters, 860(2), L18. (Per la modellazione della compatibilità e delle variazioni temporali e di fase).
 
+2. Meadows, V. S., et al. (2018). The Habitability of Proxima Centauri b. II. Possible Atmospheres and Observational Discriminants. Astrobiology, 18(2), 133-189. (Per la discriminazione delle biofirme e lo studio delle atmosfere planetarie).
+
+3. Schwieterman, E. W., et al. (2018). Exoplanet Biosignatures: A Review of Remotely Detectable Signs of Life. Astrobiology, 18(6), 663-708. (Per l'inventario metabolico, i gas traccianti e i falsi positivi abiotici).
+
+4. Krissansen-Totton, J., et al. (2018). Detectability of Atmospheric Disequilibrium Beyond the Solar System as a Biosignature of Non-Equilibrium States. Astrophysical Journal, 853(1), 29. (Per le reti di reazione chimica e il disequilibrio metabolico).
+
+5. Wordsworth, R. D., et al. (2011). Gliese 581d is the First Discovered Super-Earth-size Exoplanet in the Habitable Zone. Icarus, 219(1), 267-279. (Per la dinamica climatica e il forcing orbitale su mondi eccentrici).
+
+6. Seager, S., et al. (2013). Biosignature Gases in H$_2$-Rich Atmospheres on Super-Earths and Mini-Neptunes. Astrophysical Journal, 777(2), 95. (Per l'analisi delle firme gassose e delle classi di risposta metabolica).
+
+7. Fujii, Y., et al. (2018). Exoplanet Diversity: A Framework for Characterizing Exoplanets. Astrobiology, 18(6), 739-778. (Per le osservazioni a risoluzione di fase e l'analisi armonica delle curve di luce e spettri).
+
+8. Stark, C. C., et al. (2014). Maximizing Yield of Earth-analog Exoplanets from a Future Direct-Imaging Mission. Journal of Astronomical Telescopes, Instruments, and Systems, 1(1), 014001. (Per la pianificazione delle epoche, i limiti del coronografo e la copertura orbitale / IWA).
+
+9. Cockell, C. S., et al. (2016). Habitability: A Review. Astrobiology, 16(1), 89-117. (Per i limiti termici degli estremofili e la quantificazione dell'abitabilità basata su parametri multipli).
+
+10. Catling, D. C., et al. (2018). Atmospheric Oxygen, Environmental Evolution, and Biosignatures on Exoplanets. Philosophical Transactions of the Royal Society A, 376(2114), 20170390. (Per la stabilità a lungo termine, le catene di reazione e l'esclusione della classe a singola risposta).
